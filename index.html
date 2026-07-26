@@ -253,7 +253,7 @@ async function placeOrder(){
   setButtonLoading(btn,true,'Creating payment…','Place order');
   $('order-status').textContent='Creating payment…';
   try{
-    const response=await fetch(PAYMENT_API+'/create-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({price_amount:total,order_id:'order-'+user.uid.slice(0,8)+'-'+Date.now(),order_description:s[0]+' · '+qty+' units',pay_currency:payCurrency,is_fixed_rate:false})});
+    const response=await fetch(PAYMENT_API+'/create-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({price_amount:total,order_id:'order-'+user.uid+'-'+Date.now(),order_description:s[0]+' · '+qty+' units',pay_currency:payCurrency,is_fixed_rate:false})});
     let data;
     try{data=await response.json()}catch{throw new Error('Payment service returned an unexpected response')}
     if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be created');
@@ -409,4 +409,3 @@ document.addEventListener('focusin',function(e){
 </script>
 </body>
 </html>
-
