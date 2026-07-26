@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <title>PULSE — Social growth, simplified</title>
 <style>
 :root{--bg:#000;--surface:#08080a;--surface-2:#0d0d10;--line:rgba(255,255,255,.14);--text:#fff;--muted:#b8b8c2;--accent:#8b7cff;--accent-2:#e36bd7;--good:#56d39b;--radius:22px}
@@ -19,12 +24,38 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-s
 .overlay{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(12px)}.overlay.open{display:grid}.modal{width:min(430px,100%);padding:26px;position:relative}.close{position:absolute;right:16px;top:14px;background:transparent;border:0;color:var(--muted);font-size:20px}.tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;margin-bottom:22px}.tabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:10px;border-radius:9px;font-weight:700}.tabs button.active{background:var(--surface-2);color:var(--text)}.auth-form{display:grid;gap:13px}.auth-form label{display:grid;gap:6px;color:var(--muted);font-size:13px;font-weight:700}.auth-form input{width:100%;border:1px solid var(--line);background:var(--surface-2);color:var(--text);padding:12px;border-radius:11px}.auth-form .btn{width:100%;margin-top:5px}
 @media(max-width:800px){.nav-links{display:none}.widget{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.platforms{grid-template-columns:repeat(4,1fr)}.platform{text-align:center}.service-list{grid-template-columns:1fr}.order-box{grid-template-columns:1fr}.section-head{display:block}.section-head p{margin-top:10px}}@media(max-width:520px){.wrap{width:min(100% - 28px,1120px)}.hero{padding:82px 0 60px}.hero h1{font-size:54px}.platforms{grid-template-columns:repeat(2,1fr)}.view-switch{width:100%}.view-switch button{flex:1;padding-inline:8px}}
 input[type=number]{appearance:textfield}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{opacity:1;height:24px;filter:grayscale(1) contrast(.7);cursor:pointer}
-body{position:relative;min-height:100vh;background:transparent;overflow-x:hidden}body:before,body:after{content:"";position:fixed;pointer-events:none}body:before{inset:0;z-index:-3;background:#000}body.light:before{background:linear-gradient(180deg,#f6f7fb,#ececf2)}body:after{z-index:-2;width:430px;height:430px;right:-150px;top:120px;border-radius:50%;filter:blur(100px);background:color-mix(in srgb,var(--accent),transparent 82%)}nav{background:color-mix(in srgb,var(--bg),transparent 24%);box-shadow:0 10px 35px rgba(0,0,0,.12)}.brand i{box-shadow:0 8px 24px color-mix(in srgb,var(--accent),transparent 66%)}.hero{position:relative}.hero:after{content:"";position:absolute;left:50%;bottom:20px;width:min(900px,80vw);height:180px;transform:translateX(-50%);z-index:-1;background:radial-gradient(ellipse,var(--accent),transparent 68%);filter:blur(75px);opacity:.12}.panel{position:relative;overflow:hidden;background:color-mix(in srgb,var(--surface),transparent 10%);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 22px 65px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04)}.panel:before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent-2),transparent);opacity:.55;z-index:2}.service,.quick-action,.field,.chip,.platform{backdrop-filter:blur(12px)}.service{background:color-mix(in srgb,var(--surface-2),transparent 10%)}.service.active{background:linear-gradient(145deg,color-mix(in srgb,var(--accent),transparent 88%),color-mix(in srgb,var(--surface-2),transparent 5%))}.section-head .eyebrow{display:inline-flex;align-items:center;gap:8px}.section-head .eyebrow:before{content:"";width:20px;height:1px;background:var(--accent)}.view-switch{box-shadow:0 12px 30px rgba(0,0,0,.12);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--surface),transparent 8%)}.sidebar{background:color-mix(in srgb,var(--surface-2),transparent 8%)}.price-card{transition:.22s}.price-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent),var(--line) 45%)}.faq-item{transition:.2s}.faq-item:hover{padding-left:8px}.modal{background:color-mix(in srgb,var(--surface),transparent 4%)}footer{background:color-mix(in srgb,var(--bg),transparent 28%);backdrop-filter:blur(18px)}
+body{position:relative;min-height:100vh;background:transparent;overflow-x:hidden}body:before,body:after{content:"";position:fixed;pointer-events:none}body:before{inset:0;z-index:-4;background:#000}body.light:before{background:linear-gradient(180deg,#f6f7fb,#ececf2)}body:after{z-index:-2;width:430px;height:430px;right:-150px;top:120px;border-radius:50%;filter:blur(100px);background:color-mix(in srgb,var(--accent),transparent 82%)}
+.sky-scene{position:fixed;inset:0;z-index:-3;overflow:hidden;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.sky-scene:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,transparent 0%,transparent 35%,var(--bg) 100%),linear-gradient(180deg,color-mix(in srgb,var(--bg),transparent 15%) 0%,transparent 30%,transparent 65%,var(--bg) 100%)}
+.sky-scene.sky-day.active{opacity:.28}
+.sky-scene.sky-night.active{opacity:.5}
+.sky-track{position:absolute;top:0;left:0;height:100%;width:200%;display:flex;animation:sky-drift 140s linear infinite}
+.sky-scene.sky-night .sky-track{animation-duration:220s}
+.sky-img{width:50%;height:100%;object-fit:cover;display:block;flex-shrink:0}
+@keyframes sky-drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.sky-track{animation:none}}
+nav{background:color-mix(in srgb,var(--bg),transparent 24%);box-shadow:0 10px 35px rgba(0,0,0,.12)}.brand i{box-shadow:0 8px 24px color-mix(in srgb,var(--accent),transparent 66%)}.hero{position:relative}.hero:after{content:"";position:absolute;left:50%;bottom:20px;width:min(900px,80vw);height:180px;transform:translateX(-50%);z-index:-1;background:radial-gradient(ellipse,var(--accent),transparent 68%);filter:blur(75px);opacity:.12}.panel{position:relative;overflow:hidden;background:color-mix(in srgb,var(--surface),transparent 10%);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 22px 65px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04)}.panel:before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent-2),transparent);opacity:.55;z-index:2}.service,.quick-action,.field,.chip,.platform{backdrop-filter:blur(12px)}.service{background:color-mix(in srgb,var(--surface-2),transparent 10%)}.service.active{background:linear-gradient(145deg,color-mix(in srgb,var(--accent),transparent 88%),color-mix(in srgb,var(--surface-2),transparent 5%))}.section-head .eyebrow{display:inline-flex;align-items:center;gap:8px}.section-head .eyebrow:before{content:"";width:20px;height:1px;background:var(--accent)}.view-switch{box-shadow:0 12px 30px rgba(0,0,0,.12);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--surface),transparent 8%)}.sidebar{background:color-mix(in srgb,var(--surface-2),transparent 8%)}.price-card{transition:.22s}.price-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent),var(--line) 45%)}.faq-item{transition:.2s}.faq-item:hover{padding-left:8px}.modal{background:color-mix(in srgb,var(--surface),transparent 4%)}footer{background:color-mix(in srgb,var(--bg),transparent 28%);backdrop-filter:blur(18px)}
 .hero-details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:760px;margin-top:42px}.hero-detail{position:relative;padding:17px 18px;border:1px solid var(--line);border-radius:17px;background:color-mix(in srgb,var(--surface),transparent 14%);backdrop-filter:blur(20px);box-shadow:0 16px 36px rgba(0,0,0,.16);overflow:hidden}.hero-detail:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}.hero-detail small{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.hero-detail strong{display:block;margin-top:6px;font-size:17px}.hero-detail i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#53d696;margin-right:7px;box-shadow:0 0 0 4px rgba(83,214,150,.11)}.section>.wrap{position:relative}.section>.wrap:before{content:"";position:absolute;left:-18px;top:0;width:3px;height:54px;border-radius:999px;background:linear-gradient(var(--accent),var(--accent-2));opacity:.8}.widget-main:before{content:"Order workspace";display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;margin-bottom:16px}.table-tools{padding:12px;border:1px solid var(--line);border-radius:15px;background:color-mix(in srgb,var(--surface-2),transparent 12%)}@media(max-width:700px){.hero-details{grid-template-columns:1fr}.section>.wrap:before{display:none}}
 /* Unified glass design */
 nav,.panel,.view-switch,.hero-detail,.service,.field,.chip,.platform,.tabs,.auth-form input{background:linear-gradient(145deg,rgba(18,18,22,.62),rgba(0,0,0,.42));border-color:rgba(255,255,255,.12);backdrop-filter:blur(24px) saturate(135%);-webkit-backdrop-filter:blur(24px) saturate(135%);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 45px rgba(0,0,0,.18)}body.light nav,body.light .panel,body.light .view-switch,body.light .hero-detail,body.light .service,body.light .field,body.light .chip,body.light .platform,body.light .tabs,body.light .auth-form input{background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(255,255,255,.42));border-color:rgba(255,255,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 18px 45px rgba(46,48,67,.10)}.panel:after,.hero-detail:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(255,255,255,.025))}.sidebar,.order-summary,.table-tools{background:rgba(0,0,0,.42);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}body.light .sidebar,body.light .order-summary,body.light .table-tools{background:rgba(255,255,255,.34)}.btn{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.13);backdrop-filter:blur(16px)}body.light .btn{background:rgba(255,255,255,.52);border-color:rgba(255,255,255,.76)}.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}.modal{box-shadow:0 28px 90px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.1)}
 /* Light theme contrast fixes */ body.light .btn.primary,body.light .btn.primary:hover{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}body.light .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}body.light .view-switch button.active{background:var(--text);color:var(--bg)}body.light .platform.active{background:rgba(91,75,219,.12);color:var(--accent)}body.light .service.active{background:linear-gradient(145deg,rgba(91,75,219,.14),rgba(255,255,255,.72));border-color:var(--accent)}body.light .field,body.light .order-summary,body.light .table-tools{color:var(--text)}/* Modal close button contrast */ .close{z-index:3;width:36px;height:36px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:25px;line-height:1;font-weight:700;cursor:pointer;transition:.2s}.close:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.55);transform:scale(1.05)}body.light .close{color:#171821;background:rgba(255,255,255,.78);border-color:rgba(24,26,40,.28)}body.light .close:hover{background:#fff;border-color:var(--accent);color:var(--accent)}/* Light modal fix */ body.light .overlay{background:rgba(246,247,251,.58);backdrop-filter:blur(14px)}body.light .modal{background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(245,246,251,.86));border-color:rgba(24,26,40,.18);box-shadow:0 28px 80px rgba(40,42,58,.18),inset 0 1px 0 #fff}body.light .tabs{background:rgba(238,240,247,.88);border-color:rgba(24,26,40,.14)}body.light .tabs button.active{background:#fff;color:#171821;box-shadow:0 5px 18px rgba(45,48,70,.10)}body.light .auth-form input{background:rgba(255,255,255,.92);border-color:rgba(24,26,40,.18);color:#171821}/* Optimized cursor shader */
-body>.overlay{position:fixed;z-index:40}</style>
+body>.overlay{position:fixed;z-index:40}
+/* Micro-animations */
+.btn,.field,.chip,.platform,.service,.quick-action,.faq-item,.auth-form input,.price-card,input,select,textarea{transition:transform .16s ease,box-shadow .18s ease,border-color .18s ease,background-color .18s ease,color .16s ease}
+.btn:hover{transform:translateY(-1px) scale(1.02)}
+.btn:active{transform:scale(.97)}
+.chip:hover,.platform:hover{transform:scale(1.02)}
+.chip:active,.platform:active,.service:active{transform:scale(.98)}
+.field:focus,.auth-form input:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent),transparent 80%);border-color:var(--accent)}
+.service:hover{transform:translateY(-2px) scale(1.01)}
+@keyframes pulse-shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+.shake{animation:pulse-shake .38s cubic-bezier(.36,.07,.19,.97) both}
+.field-error{border-color:var(--danger,#ff6b7a)!important;box-shadow:0 0 0 3px rgba(255,107,122,.2)!important}
+@keyframes success-bounce{0%{transform:scale(1)}45%{transform:scale(1.05)}100%{transform:scale(1)}}
+.success-pulse{animation:success-bounce .35s ease}
+@keyframes fade-slide-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.status,#login-status,#content-status,#faq-status,#service-status{transition:opacity .2s ease}
+</style>
 <style>.google-btn{width:100%;margin-top:10px;justify-content:center;background:var(--surface-2)}.google-btn:hover{border-color:var(--accent)}.payment-amount{margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}.payment-amount small,.payment-address small{display:block;color:var(--muted);margin-bottom:5px}.payment-amount strong{font-size:27px}.payment-address{padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}.payment-address code{display:block;color:var(--text);word-break:break-all;font:700 13px/1.5 ui-monospace,monospace}.payment-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.payment-actions .btn{padding-inline:10px}@media(max-width:440px){.payment-actions{grid-template-columns:1fr}}</style>
 <style>.inline-payment{display:none;margin-top:12px;padding:16px;border:1px solid color-mix(in srgb,var(--accent),var(--line) 55%);border-radius:16px;background:linear-gradient(145deg,rgba(139,124,255,.12),rgba(0,0,0,.34));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 35px rgba(0,0,0,.18)}.inline-payment.open{display:block;animation:payment-in .28s ease both}@keyframes payment-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}.inline-payment-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.inline-payment-head strong{font-size:15px}.inline-payment-head small{color:var(--muted)}.inline-payment-amount{font-size:19px;color:var(--text)}.inline-payment-address{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--line)}.inline-payment-address code{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font:600 12px ui-monospace,monospace}.inline-payment-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:11px}.inline-payment-actions .btn{padding:8px 12px;font-size:12px}@media(max-width:560px){.inline-payment-actions{display:grid;grid-template-columns:1fr 1fr}.inline-payment-actions .btn{width:100%}}</style>
 <style>.last-payment-toggle{display:inline-flex;align-items:center;gap:7px;margin-left:auto;border:1px solid color-mix(in srgb,var(--accent),var(--line) 45%);background:rgba(139,124,255,.11);color:var(--text);padding:7px 10px;border-radius:9px;font-size:11px;font-weight:800;transition:.2s}.last-payment-toggle.show{display:inline-flex;align-items:center;gap:7px}.last-payment-toggle:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent),transparent 82%)}.last-payment-toggle:hover{border-color:var(--accent);background:rgba(139,124,255,.18);transform:translateY(-1px)}.order-summary .last-payment-toggle+strong{margin-left:2px}</style>
@@ -48,6 +79,9 @@ body>.overlay{position:fixed;z-index:40}</style>
 #payment-overlay.payment-complete #payment-status,.inline-payment.complete #inline-payment-status{color:var(--good);font-weight:800}
 #payment-overlay.payment-complete #payment-amount,.inline-payment.complete .inline-payment-amount{color:var(--good)}
 @keyframes payment-success{0%{transform:scale(.985);filter:brightness(1)}45%{transform:scale(1.012);filter:brightness(1.22)}100%{transform:scale(1);filter:brightness(1)}}
+#payment-overlay.payment-failed .modal,.inline-payment.failed{border-color:rgba(255,107,122,.75);box-shadow:0 0 0 1px rgba(255,107,122,.18),0 0 30px rgba(255,107,122,.22),inset 0 1px 0 rgba(255,255,255,.1)}
+#payment-overlay.payment-failed #payment-status,.inline-payment.failed #inline-payment-status{color:#ff6b7a;font-weight:800}
+button:disabled{opacity:.6;cursor:not-allowed;transform:none!important}
 </style>
 <style>
 .password-field{position:relative}.password-field input{padding-right:48px}.password-toggle{position:absolute;right:10px;bottom:8px;width:34px;height:34px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:17px}.password-toggle:hover{background:var(--surface);color:var(--text)}.password-hint{display:none;margin-top:-5px;color:var(--muted);font-size:12px;line-height:1.45}.password-hint.open{display:block}
@@ -57,17 +91,19 @@ body>.overlay{position:fixed;z-index:40}</style>
 </head>
 <body>
 <script>if(localStorage.getItem("pulse-theme")==="light")document.body.classList.add("light")</script>
+<div class="sky-scene sky-day" id="sky-day" aria-hidden="true"><div class="sky-track"><img class="sky-img" src="day-sky.jpg" alt=""><img class="sky-img" src="day-sky.jpg" alt=""></div></div>
+<div class="sky-scene sky-night" id="sky-night" aria-hidden="true"><div class="sky-track"><img class="sky-img" src="night-sky.jpg" alt=""><img class="sky-img" src="night-sky.jpg" alt=""></div></div>
 <nav><div class="wrap nav-inner"><a class="brand" href="#"><i>✦</i>PULSE</a><div class="nav-links"><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></div><div class="nav-actions"><button class="btn icon-btn" id="theme-toggle" aria-label="Switch theme">&#9790;</button><button class="btn" id="auth-nav-button" onclick="handleAuthButton()">Log in</button></div></div></nav>
 <script>{const label=localStorage.getItem("pulse-auth-label");if(label)document.getElementById("auth-nav-button").textContent=label}</script>
 <main>
 <section class="hero"><div class="wrap"><div class="eyebrow" id="hero-eyebrow">Simple social growth</div><h1><span id="hero-title-1" style="background:none;color:var(--text)">Real engagement</span><br><span id="hero-title-2">Clear control</span></h1><p id="hero-description">Followers, likes and views for the platforms you use Pick a service, choose a quantity and place an order in seconds</p><div class="hero-actions"><a class="btn primary" href="#pricing">Explore services →</a><button class="btn" onclick="openAuth('register')">Sign up</button></div><div class="hero-details"><div class="hero-detail"><small>System status</small><strong><i></i>All services online</strong></div><div class="hero-detail"><small>Average start</small><strong>Under 15 minutes</strong></div><div class="hero-detail"><small>Protection</small><strong>30-day refill</strong></div></div></div></section>
-<section class="section" id="pricing"><div class="wrap"><div class="section-head"><div><div class="eyebrow">Pricing & order</div><h2>Choose what you need</h2></div><p>Start with a platform, then choose a service Every option shows its price before you order</p></div><div class="view-switch" role="tablist"><button class="active" id="view-widget" onclick="setView('widget')">Order</button><button id="view-table" onclick="setView('table')">Table</button><button id="view-cards" onclick="setView('cards')">Cards</button></div><div id="widget-view" class="panel widget" style="margin-top:18px"><aside class="sidebar"><h3>1 &#183; Platform</h3><div class="platforms" id="platforms"></div></aside><div class="widget-main"><div class="category-row" id="categories"></div><div class="service-list" id="services"></div><div class="order-box"><input class="field" id="order-link" placeholder="Paste a public profile or post link"><input class="field" id="order-qty" type="number" min="100" step="100" value="1000" placeholder="Quantity"><select class="field" id="pay-currency" aria-label="Payment currency"><option value="usdtbsc">USDT · BSC</option><option value="usdttrc20">USDT · TRC20</option><option value="usdtton">USDT · TON</option><option value="ton">TON</option></select><button class="btn primary" onclick="placeOrder()">Place order</button></div><div class="order-summary" id="order-summary"><span id="order-summary-text">Select a service to see the total</span><button class="last-payment-toggle" id="last-payment-toggle" type="button" onclick="openLastPaymentFromHistory()">Last payment</button><strong id="order-total">$0.00</strong></div><div class="status" id="order-status" aria-live="polite"></div></div></div><div id="table-view" class="panel hidden" style="margin-top:18px;padding:18px"><div class="table-tools"><div class="filter-group"><span class="filter-label">1 &#183; Platform</span><div id="table-platforms"></div></div><div class="filter-group"><span class="filter-label">2 &#183; Service</span><div id="table-categories"></div></div><span class="count" id="result-count"></span></div><div class="table-scroll"><table class="price-table"><thead><tr><th>Platform</th><th>Service</th><th>Description</th><th>Price / 1k</th><th></th></tr></thead><tbody id="price-body"></tbody></table></div></div><div id="cards-view" class="cards-view hidden" style="margin-top:18px"></div></div></section>
+<section class="section" id="pricing"><div class="wrap"><div class="section-head"><div><div class="eyebrow">Pricing & order</div><h2>Choose what you need</h2></div><p>Start with a platform, then choose a service Every option shows its price before you order</p></div><div class="view-switch" role="tablist"><button class="active" id="view-widget" onclick="setView('widget')">Order</button><button id="view-table" onclick="setView('table')">Table</button><button id="view-cards" onclick="setView('cards')">Cards</button></div><div id="widget-view" class="panel widget" style="margin-top:18px"><aside class="sidebar"><h3>1 &#183; Platform</h3><div class="platforms" id="platforms"></div></aside><div class="widget-main"><div class="category-row" id="categories"></div><div class="service-list" id="services"></div><div class="order-box"><input class="field" id="order-link" placeholder="Paste a public profile or post link"><input class="field" id="order-qty" type="number" min="100" step="100" value="1000" placeholder="Quantity"><select class="field" id="pay-currency" aria-label="Payment currency"><option value="usdtbsc">USDT · BSC</option><option value="usdttrc20">USDT · TRC20</option><option value="usdtton">USDT · TON</option><option value="ton">TON</option></select><button class="btn primary" id="place-order-btn" onclick="placeOrder()">Place order</button></div><div class="order-summary" id="order-summary"><span id="order-summary-text">Select a service to see the total</span><button class="last-payment-toggle" id="last-payment-toggle" type="button" onclick="openLastPaymentFromHistory()">Last payment</button><strong id="order-total">$0.00</strong></div><div class="status" id="order-status" aria-live="polite"></div></div></div><div id="table-view" class="panel hidden" style="margin-top:18px;padding:18px"><div class="table-tools"><div class="filter-group"><span class="filter-label">1 &#183; Platform</span><div id="table-platforms"></div></div><div class="filter-group"><span class="filter-label">2 &#183; Service</span><div id="table-categories"></div></div><span class="count" id="result-count"></span></div><div class="table-scroll"><table class="price-table"><thead><tr><th>Platform</th><th>Service</th><th>Description</th><th>Price / 1k</th><th></th></tr></thead><tbody id="price-body"></tbody></table></div></div><div id="cards-view" class="cards-view hidden" style="margin-top:18px"></div></div></section>
 <section class="section" id="faq"><div class="wrap"><div class="section-head"><div><div class="eyebrow">FAQ</div><h2>Good to know</h2></div></div><div class="faq" id="faq-list"></div></div></section>
 </main>
 <footer><div class="wrap">&#169; 2026 PULSE &#183; Built for simple, transparent ordering</div></footer>
-<div class="overlay" id="auth-overlay"><div class="panel modal"><button class="close" onclick="closeAuth()">&#215;</button><div class="tabs"><button id="login-tab" class="active" onclick="setAuthMode('login')">Log in</button><button id="register-tab" onclick="setAuthMode('register')">Sign up</button></div><h2 id="auth-title">Log in</h2><p id="auth-sub" style="color:var(--muted)">Welcome back</p><form class="auth-form" onsubmit="submitAuth(event)"><label id="name-wrap" class="hidden">Name<input id="auth-name"></label><label>Email<input id="auth-email" type="email" required placeholder="you@mail.com"></label><label>Password<input id="auth-password" type="password" required placeholder="••••••••"></label><button class="btn primary" id="auth-submit">Log in</button></form><button class="btn google-btn" type="button" onclick="signInWithGoogle()">Continue with Google</button></div></div>
+<div class="overlay" id="auth-overlay"><div class="panel modal"><button class="close" onclick="closeAuth()">&#215;</button><div class="tabs"><button id="login-tab" class="active" onclick="setAuthMode('login')">Log in</button><button id="register-tab" onclick="setAuthMode('register')">Sign up</button></div><h2 id="auth-title">Log in</h2><p id="auth-sub" style="color:var(--muted)">Welcome back</p><form class="auth-form" onsubmit="submitAuth(event)"><label id="name-wrap" class="hidden">Name<input id="auth-name" placeholder="Your name" maxlength="80"></label><label>Email<input id="auth-email" type="email" required maxlength="254" placeholder="you@mail.com"></label><label>Password<input id="auth-password" type="password" required minlength="6" maxlength="128" placeholder="••••••••"></label><button class="btn primary" id="auth-submit">Log in</button></form><button class="btn google-btn" type="button" onclick="signInWithGoogle()">Continue with Google</button></div></div>
 <div class="overlay" id="verify-overlay"><div class="panel modal"><button class="close" onclick="closeVerification()">&#215;</button><div class="eyebrow">Email verification</div><h2 style="margin-bottom:8px">Link sent</h2><p id="verify-message" style="color:var(--muted);margin:0 0 10px"></p><p style="color:var(--muted);margin:0 0 22px">Check Inbox first If the email is missing, check Spam and Promotions Delivery can take up to 2 minutes</p><button class="btn primary" style="width:100%" onclick="verificationLogin()">Go to log in</button></div></div>
-<div class="overlay" id="payment-overlay"><div class="panel modal"><button class="close" onclick="closePayment()">&#215;</button><div class="eyebrow">Crypto payment</div><h2 style="margin-bottom:6px">Complete payment</h2><p style="color:var(--muted);margin-top:0">Send the exact amount using the selected network</p><div class="payment-amount"><small>Amount to send</small><strong id="payment-amount">—</strong></div><div class="payment-address"><small>Wallet address</small><code id="payment-address">—</code></div><div class="payment-actions"><button class="btn" onclick="copyPaymentAddress()">Copy address</button><button class="btn primary" onclick="checkPayment()">Check payment</button></div><p class="status" id="payment-status" aria-live="polite"></p></div></div>
+<div class="overlay" id="payment-overlay"><div class="panel modal"><button class="close" onclick="closePayment()">&#215;</button><div class="eyebrow">Crypto payment</div><h2 style="margin-bottom:6px">Complete payment</h2><p style="color:var(--muted);margin-top:0">Send the exact amount using the selected network</p><div class="payment-amount"><small>Amount to send</small><strong id="payment-amount">—</strong></div><div class="payment-address"><small>Wallet address</small><code id="payment-address">—</code></div><div class="payment-actions"><button class="btn" id="copy-payment-btn" onclick="copyPaymentAddress()">Copy address</button><button class="btn primary" id="check-payment-btn" onclick="checkPayment()">Check payment</button></div><button class="btn" id="cancel-payment-btn" style="width:100%;margin-top:8px;border-color:rgba(255,107,122,.5);color:#ff6b7a" onclick="cancelPayment()">Cancel payment</button><p class="status" id="payment-status" aria-live="polite"></p></div></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -76,80 +112,254 @@ body>.overlay{position:fixed;z-index:40}</style>
 const DATA={instagram:{categories:['Followers','Likes','Views'],services:{Followers:[['HQ Followers','Active-looking followers with gradual delivery',4.8],['Real Followers','Steady delivery for public profiles',7.2]],Likes:[['Post Likes','Natural-looking likes for a post',1.9]],Views:[['Video Views','Fast, stable video views',1.1]]}},tiktok:{categories:['Followers','Likes','Views'],services:{Followers:[['TikTok Followers','Gradual profile growth',5.4]],Likes:[['Video Likes','Likes for a selected video',2.2]],Views:[['Instant Views','Views with a fast start',1.3]]}},youtube:{categories:['Subscribers','Views','Likes'],services:{Subscribers:[['Channel Subscribers','Steady channel growth',8.4]],Views:[['Video Views','Realistic delivery for videos',1.6]],Likes:[['Video Likes','Likes for public videos',2.5]]}},telegram:{categories:['Members','Views','Reactions'],services:{Members:[['Channel Members','Gradual member delivery',6.9]],Views:[['Post Views','Views for public posts',1.2]],Reactions:[['Post Reactions','Reactions for public posts',2.8]]}}};
 let platform='instagram',category=DATA.instagram.categories[0],selectedService=0,view='widget',authMode='login';
 const $=id=>document.getElementById(id);
-function render(){const d=DATA[platform],services=d.services[category]||[];selectedService=Math.min(selectedService,Math.max(services.length-1,0));$('platforms').innerHTML=Object.keys(DATA).map(p=>'<button class="platform '+(p===platform?'active':'')+'" onclick="choosePlatform(\''+p+'\')">'+p[0].toUpperCase()+p.slice(1)+'</button>').join('');$('categories').innerHTML=d.categories.map(c=>'<button class="chip '+(c===category?'active':'')+'" onclick="chooseCategory(\''+c+'\')">'+c+'</button>').join('');$('services').innerHTML=services.map((s,i)=>'<article class="service '+(i===selectedService?'active':'')+'" onclick="chooseService('+i+')"><h3>'+s[0]+'</h3><p>'+s[1]+'</p><strong>$'+s[2].toFixed(2)+' / 1k</strong></article>').join('');updateTotal();renderFilters();renderRows()}
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+function jsAttr(value){return String(value??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/</g,'\\x3C').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}
+function render(){const d=DATA[platform],services=d.services[category]||[];selectedService=Math.min(selectedService,Math.max(services.length-1,0));$('platforms').innerHTML=Object.keys(DATA).map(p=>'<button class="platform '+(p===platform?'active':'')+'" onclick="choosePlatform(\''+jsAttr(p)+'\')">'+escapeHtml(p[0].toUpperCase()+p.slice(1))+'</button>').join('');$('categories').innerHTML=d.categories.map(c=>'<button class="chip '+(c===category?'active':'')+'" onclick="chooseCategory(\''+jsAttr(c)+'\')">'+escapeHtml(c)+'</button>').join('');$('services').innerHTML=services.map((s,i)=>'<article class="service '+(i===selectedService?'active':'')+'" onclick="chooseService('+i+')"><h3>'+escapeHtml(s[0])+'</h3><p>'+escapeHtml(s[1])+'</p><strong>$'+s[2].toFixed(2)+' / 1k</strong></article>').join('');updateTotal();renderFilters();renderRows()}
 function choosePlatform(p){platform=p;category=DATA[p].categories[0];selectedService=0;render()}function chooseCategory(c){category=c;selectedService=0;render()}function chooseService(i){selectedService=i;render()}
-function renderFilters(){const ps=Object.keys(DATA);$('table-platforms').innerHTML=ps.map(p=>'<button class="chip '+(p===platform?'active':'')+'" onclick="choosePlatform(\''+p+'\');setView(\'table\')">'+p+'</button>').join('');const cs=[...new Set(ps.flatMap(p=>DATA[p].categories))];$('table-categories').innerHTML=cs.map(c=>'<button class="chip '+(c===category?'active':'')+'" onclick="chooseCategory(\''+c+'\');setView(\'table\')">'+c+'</button>').join('')}
+function renderFilters(){const ps=Object.keys(DATA);$('table-platforms').innerHTML=ps.map(p=>'<button class="chip '+(p===platform?'active':'')+'" onclick="choosePlatform(\''+jsAttr(p)+'\');setView(\'table\')">'+escapeHtml(p)+'</button>').join('');const cs=[...new Set(ps.flatMap(p=>DATA[p].categories))];$('table-categories').innerHTML=cs.map(c=>'<button class="chip '+(c===category?'active':'')+'" onclick="chooseCategory(\''+jsAttr(c)+'\');setView(\'table\')">'+escapeHtml(c)+'</button>').join('')}
 function rows(){return Object.entries(DATA).flatMap(([p,d])=>d.categories.flatMap(c=>(d.services[c]||[]).map(s=>({p,c,s})))).filter(x=>x.p===platform&&x.c===category)}
-function renderRows(){const list=rows();$('result-count').textContent=list.length+' services';$('price-body').innerHTML=list.map(x=>'<tr><td>'+x.p+'</td><td><strong>'+x.s[0]+'</strong></td><td>'+x.s[1]+'</td><td>$'+x.s[2].toFixed(2)+'</td><td><button class="btn primary" onclick="placeOrder()">Order</button></td></tr>').join('');$('cards-view').innerHTML=list.map(x=>'<article class="panel price-card"><div class="eyebrow">'+x.p+' · '+x.c+'</div><h3>'+x.s[0]+'</h3><p>'+x.s[1]+'</p><strong>$'+x.s[2].toFixed(2)+' / 1k</strong><button class="btn primary" style="width:100%;margin-top:14px" onclick="placeOrder()">Order</button></article>').join('')}
+function renderRows(){const list=rows();$('result-count').textContent=list.length+' services';$('price-body').innerHTML=list.map(x=>'<tr><td>'+escapeHtml(x.p)+'</td><td><strong>'+escapeHtml(x.s[0])+'</strong></td><td>'+escapeHtml(x.s[1])+'</td><td>$'+x.s[2].toFixed(2)+'</td><td><button class="btn primary" onclick="placeOrder()">Order</button></td></tr>').join('');$('cards-view').innerHTML=list.map(x=>'<article class="panel price-card"><div class="eyebrow">'+escapeHtml(x.p)+' · '+escapeHtml(x.c)+'</div><h3>'+escapeHtml(x.s[0])+'</h3><p>'+escapeHtml(x.s[1])+'</p><strong>$'+x.s[2].toFixed(2)+' / 1k</strong><button class="btn primary" style="width:100%;margin-top:14px" onclick="placeOrder()">Order</button></article>').join('')}
 function setView(v){view=v;['widget','table','cards'].forEach(x=>{$(x+'-view').classList.toggle('hidden',x!==v);$('view-'+x).classList.toggle('active',x===v)})}
 function updateTotal(){const s=(DATA[platform].services[category]||[])[selectedService],qty=Math.max(0,Number($('order-qty').value)||0),total=s?(qty/1000)*s[2]:0;$('order-total').textContent='$'+total.toFixed(2);$('order-summary-text').textContent=s?s[0]+' · '+qty.toLocaleString()+' units':'Select a service to see the total'}
-const PAYMENT_API='https://dafaf.qwweeerrbi.workers.dev',PAY_CURRENCIES={usdtbsc:{label:'USDT (BSC)',network:'BSC'},usdttrc20:{label:'USDT (TRC20)',network:'TRC20'},usdtton:{label:'USDT (TON)',network:'TON'},ton:{label:'TON',network:'TON'}};let currentPaymentId=null,currentTransactionRef=null;
-async function placeOrder(){const user=firebaseAuth.currentUser;if(!user){$('order-status').textContent='Log in to create a payment';openAuth('login');return}const link=$('order-link').value.trim(),qty=Number($('order-qty').value),s=(DATA[platform].services[category]||[])[selectedService],payCurrency=$('pay-currency').value,currency=PAY_CURRENCIES[payCurrency];$('order-status').textContent='';if(!link||!/^https?:\/\//i.test(link)){$('order-status').textContent='Add a valid public link starting with https://';return}if(!qty||qty<100){$('order-status').textContent='Quantity must be at least 100 units';return}if(!s){$('order-status').textContent='Choose a service first';return}const total=Number(((qty/1000)*s[2]).toFixed(2));$('order-status').textContent='Creating payment';try{const response=await fetch(PAYMENT_API+'/create-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({price_amount:total,order_id:'order-'+user.uid.slice(0,8)+'-'+Date.now(),order_description:s[0]+' · '+qty+' units',pay_currency:payCurrency,is_fixed_rate:false})}),data=await response.json();if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be created');currentPaymentId=data.payment_id;currentTransactionRef=firebaseDb.collection('users').doc(user.uid).collection('transactions').doc(String(data.payment_id));currentTransactionRef.set({paymentId:String(data.payment_id),service:s[0],platform,category,quantity:qty,link,priceAmount:total,payAmount:Number(data.pay_amount)||0,payCurrency,currencyLabel:currency.label,network:currency.network,status:data.payment_status||'waiting',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(error=>console.warn('Transaction history could not be saved',error.message));$('payment-amount').textContent=data.pay_amount+' '+currency.label;$('payment-address').textContent=data.pay_address;$('payment-status').textContent='Waiting for payment on the '+currency.network+' network';$('payment-overlay').classList.add('open');$('order-status').textContent=''}catch(error){$('order-status').textContent=error.message}}
-function closePayment(){$('payment-overlay').classList.remove('open')}async function copyPaymentAddress(){await navigator.clipboard.writeText($('payment-address').textContent);$('payment-status').textContent='Address copied'}async function checkPayment(){if(!currentPaymentId)return;$('payment-status').textContent='Checking payment';try{const response=await fetch(PAYMENT_API+'/payment-status?id='+encodeURIComponent(currentPaymentId)),data=await response.json(),status=data.payment_status;if(currentTransactionRef)currentTransactionRef.set({status:status||'waiting',payAmount:Number(data.pay_amount)||0,actuallyPaid:Number(data.actually_paid)||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(error=>console.warn('Transaction status could not be saved',error.message));if(status==='finished')$('payment-status').textContent='Payment complete Your order is confirmed';else if(['confirmed','sending'].includes(status))$('payment-status').textContent='Payment confirmed Finalizing';else if(status==='partially_paid')$('payment-status').textContent='Payment is incomplete Send the remaining amount';else if(['failed','expired'].includes(status))$('payment-status').textContent='Payment '+status+'. Create a new payment';else $('payment-status').textContent='Payment not received yet'}catch(error){$('payment-status').textContent='Could not check payment Try again'}}
 function openAuth(m){authMode=m;$('auth-title').textContent=m==='register'?'Sign up':'Log in';$('auth-sub').textContent=m==='register'?'Start placing orders in a few seconds':'Welcome back';$('auth-submit').textContent=m==='register'?'Sign up':'Log in';$('name-wrap').classList.toggle('hidden',m!=='register');$('auth-name').required=m==='register';$('login-tab').classList.toggle('active',m==='login');$('register-tab').classList.toggle('active',m==='register');$('auth-overlay').classList.add('open')}function closeAuth(){$('auth-overlay').classList.remove('open')}function showVerification(email){closeAuth();$('verify-message').textContent='We sent the verification link to '+email+'. Open it to confirm your email';$('verify-overlay').classList.add('open')}function closeVerification(){$('verify-overlay').classList.remove('open')}function verificationLogin(){closeVerification();openAuth('login')}
 async function signInWithGoogle(){try{await firebasePersistence;const result=await firebaseAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const role=await getUserRole(result.user.uid).catch(()=>'user');localStorage.setItem('pulse-auth-label',role==='admin'?'Admin':'Account');closeAuth();location.href=role==='admin'?'admin.html':'account_new.html'}catch(error){$('auth-sub').textContent=pulseAuthError(error)}}
-async function submitAuth(e){e.preventDefault();$('auth-sub').textContent='Please wait';try{await firebasePersistence;const email=$('auth-email').value.trim(),password=$('auth-password').value;if(authMode==='register'){const result=await firebaseAuth.createUserWithEmailAndPassword(email,password);await result.user.sendEmailVerification();showVerification(email);return}const result=await firebaseAuth.signInWithEmailAndPassword(email,password);const role=await getUserRole(result.user.uid).catch(()=>'user');if(role!=='admin'&&!result.user.emailVerified){await result.user.sendEmailVerification().catch(()=>{});showVerification(email);return}localStorage.setItem('pulse-auth-label',role==='admin'?'Admin':'Account');closeAuth();location.href=role==='admin'?'admin.html':'account_new.html'}catch(error){$('auth-sub').textContent=pulseAuthError(error)}}
+function shakeAuthForm(fieldIds){const modal=document.querySelector('#auth-overlay .modal');if(modal){modal.classList.remove('shake');void modal.offsetWidth;modal.classList.add('shake')}(fieldIds||[]).forEach(id=>{const el=$(id);if(!el)return;el.classList.add('field-error');setTimeout(()=>el.classList.remove('field-error'),900)})}
+async function submitAuth(e){e.preventDefault();$('auth-sub').textContent='Please wait';try{await firebasePersistence;const email=$('auth-email').value.trim(),password=$('auth-password').value;if(authMode==='register'){const name=$('auth-name').value.trim();if(!name){$('auth-sub').textContent='Please enter your name';shakeAuthForm(['auth-name']);return}const result=await firebaseAuth.createUserWithEmailAndPassword(email,password);await result.user.updateProfile({displayName:name});await firebaseDb.collection('users').doc(result.user.uid).set({displayName:name,email},{merge:true});await result.user.sendEmailVerification();showVerification(email);return}const result=await firebaseAuth.signInWithEmailAndPassword(email,password);const role=await getUserRole(result.user.uid).catch(()=>'user');if(role!=='admin'&&!result.user.emailVerified){await result.user.sendEmailVerification().catch(()=>{});showVerification(email);return}localStorage.setItem('pulse-auth-label',role==='admin'?'Admin':'Account');closeAuth();location.href=role==='admin'?'admin.html':'account_new.html'}catch(error){$('auth-sub').textContent=pulseAuthError(error);shakeAuthForm(['auth-email','auth-password'])}}
 function handleAuthButton(){const user=firebaseAuth.currentUser;if(user){const cached=localStorage.getItem('pulse-auth-label');location.href=cached==='Admin'?'admin.html':'account_new.html'}else{localStorage.removeItem('pulse-auth-label');openAuth('login')}}firebaseAuth.onAuthStateChanged(async user=>{const button=$('auth-nav-button');if(!user){localStorage.removeItem('pulse-auth-label');button.textContent='Log in';return}try{const role=await getUserRole(user.uid);if(role!=='admin'&&!user.emailVerified){await firebaseAuth.signOut();localStorage.removeItem('pulse-auth-label');button.textContent='Log in';return}const label=role==='admin'?'Admin':'Account';button.textContent=label;localStorage.setItem('pulse-auth-label',label)}catch{button.textContent='Account';localStorage.setItem('pulse-auth-label','Account')}});
-function applyTheme(light){document.body.classList.toggle('light',light);const toggle=$('theme-toggle');toggle.textContent=light?'☀':'☾';toggle.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');localStorage.setItem('pulse-theme',light?'light':'dark')}$('theme-toggle').onclick=()=>applyTheme(!$('theme-toggle').getAttribute('aria-label')?.includes('dark'));applyTheme(localStorage.getItem('pulse-theme')==='light');document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuth();closeVerification();closePayment()}});
+function applyTheme(light){document.body.classList.toggle('light',light);const toggle=$('theme-toggle');toggle.textContent=light?'☀':'☾';toggle.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');localStorage.setItem('pulse-theme',light?'light':'dark');document.getElementById('sky-day').classList.toggle('active',light);document.getElementById('sky-night').classList.toggle('active',!light)}$('theme-toggle').onclick=()=>applyTheme(!$('theme-toggle').getAttribute('aria-label')?.includes('dark'));applyTheme(localStorage.getItem('pulse-theme')==='light');document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuth();closeVerification();closePayment()}});
 const faqs=[['Do you need my password?','No We only need a public profile or post link'],['How fast does an order start?','Most orders start within a few minutes'],['Can I order for a private profile?','No The profile or post must be public']];$('faq-list').innerHTML=faqs.map((f,i)=>'<div class="faq-item '+(i===0?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="faq-q">'+f[0]+'<span>+</span></div><div class="faq-a">'+f[1]+'</div></div>').join('');
 $('order-qty').addEventListener('input',updateTotal);render();
-async function loadFirebaseContent(){try{const content=await firebaseDb.collection('siteContent').doc('main').get();if(content.exists){const d=content.data();if(d.heroEyebrow)$('hero-eyebrow').textContent=d.heroEyebrow;if(d.heroTitle1)$('hero-title-1').textContent=d.heroTitle1;if(d.heroTitle2)$('hero-title-2').textContent=d.heroTitle2;if(d.heroDescription)$('hero-description').textContent=d.heroDescription;if(Array.isArray(d.faq)&&d.faq.length)$('faq-list').innerHTML=d.faq.map((f,i)=>'<div class="faq-item '+(i===0?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="faq-q">'+f.question+'<span>+</span></div><div class="faq-a">'+f.answer+'</div></div>').join('')}const services=await firebaseDb.collection('services').get();if(!services.empty){const remote={};services.forEach(doc=>{const x=doc.data();if(!remote[x.platform])remote[x.platform]={categories:[],services:{}};if(!remote[x.platform].categories.includes(x.category))remote[x.platform].categories.push(x.category);if(!remote[x.platform].services[x.category])remote[x.platform].services[x.category]=[];remote[x.platform].services[x.category].push([x.name,x.description,Number(x.price)])});Object.entries(remote).forEach(([p,d])=>{if(!DATA[p])DATA[p]=d;else d.categories.forEach(c=>{if(!DATA[p].categories.includes(c))DATA[p].categories.push(c);const merged=[...(DATA[p].services[c]||[])];(d.services[c]||[]).forEach(item=>{const at=merged.findIndex(existing=>existing[0]===item[0]);if(at>=0)merged[at]=item;else merged.push(item)});DATA[p].services[c]=merged})});render()}}catch(error){console.warn('Firebase content unavailable',error.message)}}loadFirebaseContent();
+async function loadFirebaseContent(){try{const content=await firebaseDb.collection('siteContent').doc('main').get();if(content.exists){const d=content.data();if(d.heroEyebrow)$('hero-eyebrow').textContent=d.heroEyebrow;if(d.heroTitle1)$('hero-title-1').textContent=d.heroTitle1;if(d.heroTitle2)$('hero-title-2').textContent=d.heroTitle2;if(d.heroDescription)$('hero-description').textContent=d.heroDescription;if(Array.isArray(d.faq)&&d.faq.length)$('faq-list').innerHTML=d.faq.map((f,i)=>'<div class="faq-item '+(i===0?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="faq-q">'+escapeHtml(f.question)+'<span>+</span></div><div class="faq-a">'+escapeHtml(f.answer)+'</div></div>').join('')}const services=await firebaseDb.collection('services').get();if(!services.empty){const remote={};services.forEach(doc=>{const x=doc.data();if(!remote[x.platform])remote[x.platform]={categories:[],services:{}};if(!remote[x.platform].categories.includes(x.category))remote[x.platform].categories.push(x.category);if(!remote[x.platform].services[x.category])remote[x.platform].services[x.category]=[];remote[x.platform].services[x.category].push([x.name,x.description,Number(x.price)])});Object.entries(remote).forEach(([p,d])=>{if(!DATA[p])DATA[p]=d;else d.categories.forEach(c=>{if(!DATA[p].categories.includes(c))DATA[p].categories.push(c);const merged=[...(DATA[p].services[c]||[])];(d.services[c]||[]).forEach(item=>{const at=merged.findIndex(existing=>existing[0]===item[0]);if(at>=0)merged[at]=item;else merged.push(item)});DATA[p].services[c]=merged})});render()}}catch(error){console.warn('Firebase content unavailable',error.message)}}loadFirebaseContent();
 </script>
 <script>
-const paymentButton=document.getElementById('last-payment-toggle');const cleanPaymentCard=document.createElement('section');cleanPaymentCard.className='inline-payment';cleanPaymentCard.id='inline-payment';cleanPaymentCard.innerHTML='<div class="inline-payment-head"><div><strong>Payment details</strong><br><small id="inline-payment-status">Waiting for payment</small></div><strong class="inline-payment-amount" id="inline-payment-amount">—</strong></div><div class="inline-payment-address"><code id="inline-payment-address">—</code></div><div class="inline-payment-actions"><button class="btn" id="inline-copy-payment" type="button">Copy address</button><button class="btn primary" id="inline-check-payment" type="button">Check payment</button></div>';document.getElementById('order-status').insertAdjacentElement('afterend',cleanPaymentCard);function paintInlinePayment(){document.getElementById('inline-payment-amount').textContent=$('payment-amount').textContent;document.getElementById('inline-payment-address').textContent=$('payment-address').textContent;document.getElementById('inline-payment-status').textContent=$('payment-status').textContent||'Waiting for payment';cleanPaymentCard.classList.add('open');paymentButton.textContent='Hide payment'}async function findLastPayment(){const params=new URLSearchParams(location.search),queryId=params.get('paymentId');if(queryId)return{id:String(queryId),currency:params.get('currency')||'usdtbsc'};const user=firebaseAuth.currentUser;if(!user)return null;let items=[];try{items=JSON.parse(localStorage.getItem(`pulse-transactions-${user.uid}`)||'[]')}catch{}if(!items.length){try{const snap=await firebaseDb.collection('users').doc(user.uid).get();items=Array.isArray(snap.data()?.transactions)?snap.data().transactions:[]}catch{}}const item=items.slice().reverse().find(entry=>!['finished','failed','expired'].includes(entry.status));return item?{id:String(item.paymentId),currency:item.payCurrency||'usdtbsc'}:null}async function loadPaymentIntoCard(){paymentButton.disabled=true;paymentButton.textContent='Loading...';try{const saved=await findLastPayment();if(!saved)throw new Error('No active payments');const currency=PAY_CURRENCIES[saved.currency]||PAY_CURRENCIES.usdtbsc,response=await fetch(`${PAYMENT_API}/payment-status?id=${encodeURIComponent(saved.id)}`),data=await response.json();if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be loaded');currentPaymentId=data.payment_id;$('payment-amount').textContent=`${data.pay_amount||'—'} ${currency.label}`;$('payment-address').textContent=data.pay_address||'Payment address unavailable';$('payment-status').textContent=data.payment_status==='finished'?'Payment complete':`Waiting for payment on the ${currency.network} network`;paintInlinePayment()}catch(error){paymentButton.textContent=error.message||'No active payments'}finally{paymentButton.disabled=false}}window.openLastPaymentFromHistory=async function(){if(cleanPaymentCard.classList.contains('open')){cleanPaymentCard.classList.remove('open');paymentButton.textContent='Last payment';return}await loadPaymentIntoCard()};document.getElementById('inline-copy-payment').onclick=async()=>{await navigator.clipboard.writeText(document.getElementById('inline-payment-address').textContent);document.getElementById('inline-payment-status').textContent='Address copied'};document.getElementById('inline-check-payment').onclick=async()=>{await checkPayment();paintInlinePayment()};const cleanPlaceOrder=placeOrder;placeOrder=async function(){const before=currentPaymentId;await cleanPlaceOrder();if(currentPaymentId&&currentPaymentId!==before){const user=firebaseAuth.currentUser,s=(DATA[platform].services[category]||[])[selectedService],currency=$('pay-currency').value,record={paymentId:String(currentPaymentId),service:s?.[0]||'Order',platform,category,quantity:Number($('order-qty').value)||0,priceAmount:Number($('order-total').textContent.replace('$',''))||0,payCurrency:currency,status:'waiting',createdAt:new Date().toISOString()};if(user){const key=`pulse-transactions-${user.uid}`;let items=[];try{items=JSON.parse(localStorage.getItem(key)||'[]')}catch{}if(!items.some(item=>String(item.paymentId)===record.paymentId)){items.push(record);localStorage.setItem(key,JSON.stringify(items))}}paintInlinePayment()}};
-</script>
-<script>
-window.setAuthMode=function(mode){openAuth(mode)}
-function syncPaymentState(){
-  const complete=/payment complete/i.test($('payment-status').textContent||'');
-  document.getElementById('payment-overlay').classList.toggle('payment-complete',complete);
-  const card=document.getElementById('inline-payment');
-  if(card)card.classList.toggle('complete',complete);
+if(new URLSearchParams(location.search).get('paymentId')){
+  document.getElementById('pricing').scrollIntoView({behavior:'auto',block:'start'});
 }
-const pulseCheckPayment=checkPayment;
-checkPayment=async function(){await pulseCheckPayment();syncPaymentState()};
-const pulsePaintInlinePayment=paintInlinePayment;
-paintInlinePayment=function(){pulsePaintInlinePayment();syncPaymentState()};
-</script>
-<script>
+const PAYMENT_API='https://dafaf.qwweeerrbi.workers.dev',PAY_CURRENCIES={usdtbsc:{label:'USDT (BSC)',network:'BSC'},usdttrc20:{label:'USDT (TRC20)',network:'TRC20'},usdtton:{label:'USDT (TON)',network:'TON'},ton:{label:'TON',network:'TON'}};
+let currentPaymentId=null,currentTransactionRef=null,currentPayCurrency='usdtbsc',orderPending=false,paymentPollTimer=null;
+const TERMINAL_STATUSES=['finished','failed','expired','cancelled'];
+const cancelledPaymentIds=new Set();
 const latestPaymentWindow=10*60*1000;
-let latestPaymentTimer=null;
 function latestPaymentKey(user){return user?'pulse-latest-payment-'+user.uid:null}
-function readLatestPayment(user){
-  const key=latestPaymentKey(user);
-  if(!key)return null;
-  try{
-    const payment=JSON.parse(localStorage.getItem(key)||'null');
-    if(!payment||!payment.id||Date.now()-Number(payment.createdAt)>=latestPaymentWindow){localStorage.removeItem(key);return null}
-    return payment;
-  }catch{localStorage.removeItem(key);return null}
+function transactionsKey(user){return user?'pulse-transactions-'+user.uid:null}
+function readLatestPayment(user){const key=latestPaymentKey(user);if(!key)return null;try{const payment=JSON.parse(localStorage.getItem(key)||'null');if(!payment||!payment.id||Date.now()-Number(payment.createdAt)>=latestPaymentWindow){localStorage.removeItem(key);return null}return payment}catch{localStorage.removeItem(key);return null}}
+function saveLocalTransaction(user,record){if(!user)return;const key=transactionsKey(user);let items=[];try{items=JSON.parse(localStorage.getItem(key)||'[]')}catch{}const at=items.findIndex(item=>String(item.paymentId)===String(record.paymentId));if(at>=0)items[at]={...items[at],...record};else items.push(record);localStorage.setItem(key,JSON.stringify(items))}
+function setButtonLoading(el,loading,loadingText,normalText){if(!el)return;el.disabled=loading;if(loading){el.dataset.label=el.dataset.label||normalText||el.textContent;el.textContent=loadingText}else{el.textContent=el.dataset.label||normalText||el.textContent}}
+function pulseEl(el){if(!el)return;el.classList.remove('success-pulse');void el.offsetWidth;el.classList.add('success-pulse')}
+function stopPaymentPolling(){clearInterval(paymentPollTimer);paymentPollTimer=null}
+function startPaymentPolling(){stopPaymentPolling();paymentPollTimer=setInterval(()=>checkPayment(true),6000)}
+const paymentButton=document.getElementById('last-payment-toggle');
+const cleanPaymentCard=document.createElement('section');
+cleanPaymentCard.className='inline-payment';
+cleanPaymentCard.id='inline-payment';
+cleanPaymentCard.innerHTML='<div class="inline-payment-head"><div><strong>Payment details</strong><br><small id="inline-payment-status">Waiting for payment</small></div><strong class="inline-payment-amount" id="inline-payment-amount">—</strong></div><div class="inline-payment-address"><code id="inline-payment-address">—</code></div><div class="inline-payment-actions"><button class="btn" id="inline-copy-payment" type="button">Copy address</button><button class="btn primary" id="inline-check-payment" type="button">Check payment</button></div>';
+document.getElementById('order-status').insertAdjacentElement('afterend',cleanPaymentCard);
+function paintPayment(statusKind){
+  const complete=statusKind==='complete',failed=statusKind==='failed';
+  document.getElementById('payment-overlay').classList.toggle('payment-complete',complete);
+  document.getElementById('payment-overlay').classList.toggle('payment-failed',failed);
+  cleanPaymentCard.classList.toggle('complete',complete);
+  cleanPaymentCard.classList.toggle('failed',failed);
+  document.getElementById('inline-payment-amount').textContent=$('payment-amount').textContent;
+  document.getElementById('inline-payment-address').textContent=$('payment-address').textContent;
+  document.getElementById('inline-payment-status').textContent=$('payment-status').textContent||'Waiting for payment';
+  cleanPaymentCard.classList.add('open');
+  paymentButton.classList.remove('hidden');
+  paymentButton.textContent='Hide payment';
 }
-function armLatestPayment(user){
-  clearTimeout(latestPaymentTimer);
-  const payment=readLatestPayment(user);
-  paymentButton.classList.toggle('hidden',!payment);
-  if(!payment){
-    cleanPaymentCard.classList.remove('open','complete');
-    paymentButton.textContent='Last payment';
+async function findLastPayment(){
+  const params=new URLSearchParams(location.search),queryId=params.get('paymentId');
+  if(queryId)return{id:String(queryId),currency:params.get('currency')||'usdtbsc'};
+  const user=firebaseAuth.currentUser;
+  if(!user)return null;
+  const cached=readLatestPayment(user);
+  if(cached)return{id:String(cached.id),currency:cached.currency||'usdtbsc'};
+  let items=[];
+  try{items=JSON.parse(localStorage.getItem(transactionsKey(user))||'[]')}catch{}
+  if(!items.length){try{const snap=await firebaseDb.collection('users').doc(user.uid).get();items=Array.isArray(snap.data()?.transactions)?snap.data().transactions:[]}catch{}}
+  const item=items.slice().reverse().find(entry=>!TERMINAL_STATUSES.includes(entry.status));
+  return item?{id:String(item.paymentId),currency:item.payCurrency||'usdtbsc'}:null;
+}
+async function loadPaymentIntoCard(){
+  setButtonLoading(paymentButton,true,'Loading...','Last payment');
+  try{
+    const saved=await findLastPayment();
+    if(!saved)throw new Error('No active payments');
+    const currency=PAY_CURRENCIES[saved.currency]||PAY_CURRENCIES.usdtbsc;
+    const response=await fetch(`${PAYMENT_API}/payment-status?id=${encodeURIComponent(saved.id)}`);
+    const data=await response.json();
+    if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be loaded');
+    currentPaymentId=data.payment_id;
+    currentPayCurrency=saved.currency;
+    const user=firebaseAuth.currentUser;
+    if(user)currentTransactionRef=firebaseDb.collection('users').doc(user.uid).collection('transactions').doc(String(currentPaymentId));
+    $('payment-amount').textContent=`${data.pay_amount||'—'} ${currency.label}`;
+    $('payment-address').textContent=data.pay_address||'Payment address unavailable';
+    const kind=data.payment_status==='finished'?'complete':(TERMINAL_STATUSES.includes(data.payment_status)?'failed':'pending');
+    $('payment-status').textContent=data.payment_status==='finished'?'Payment complete Your order is confirmed':TERMINAL_STATUSES.includes(data.payment_status)?'Payment '+data.payment_status+'. Create a new payment':'Waiting for payment on the '+currency.network+' network';
+    paintPayment(kind);
+    if(kind==='pending')startPaymentPolling();
+  }catch(error){
+    setButtonLoading(paymentButton,false,'','Last payment');
+    paymentButton.textContent=error.message||'No active payments';
     return;
   }
-  latestPaymentTimer=setTimeout(()=>armLatestPayment(user),Math.max(0,latestPaymentWindow-(Date.now()-Number(payment.createdAt))));
+  setButtonLoading(paymentButton,false,'','Last payment');
 }
-findLastPayment=async function(){
-  const payment=readLatestPayment(firebaseAuth.currentUser);
-  return payment?{id:String(payment.id),currency:payment.currency||'usdtbsc'}:null;
+window.openLastPaymentFromHistory=async function(){
+  if(cleanPaymentCard.classList.contains('open')){cleanPaymentCard.classList.remove('open','complete','failed');paymentButton.textContent='Last payment';stopPaymentPolling();return}
+  await loadPaymentIntoCard();
 };
-const latestPaymentPlaceOrder=placeOrder;
-placeOrder=async function(){
-  const previousId=currentPaymentId;
-  await latestPaymentPlaceOrder();
-  const user=firebaseAuth.currentUser;
-  if(user&&currentPaymentId&&currentPaymentId!==previousId){
-    localStorage.setItem(latestPaymentKey(user),JSON.stringify({id:String(currentPaymentId),currency:$('pay-currency').value,createdAt:Date.now()}));
-    armLatestPayment(user);
+document.getElementById('inline-copy-payment').onclick=async()=>{await copyPaymentAddress()};
+document.getElementById('inline-check-payment').onclick=async()=>{await checkPayment()};
+function armLatestPayment(user){
+  const payment=readLatestPayment(user);
+  paymentButton.classList.toggle('hidden',!payment);
+  if(!payment){cleanPaymentCard.classList.remove('open','complete','failed');paymentButton.textContent='Last payment'}
+}
+let handledQueryPayment=false;
+firebaseAuth.onAuthStateChanged(async user=>{
+  armLatestPayment(user);
+  const queryId=new URLSearchParams(location.search).get('paymentId');
+  if(!queryId||handledQueryPayment)return;
+  handledQueryPayment=true;
+  await loadPaymentIntoCard();
+  if(currentPaymentId){
+    $('payment-overlay').classList.add('open');
   }
-};
-firebaseAuth.onAuthStateChanged(user=>armLatestPayment(user));
+});
+window.setAuthMode=function(mode){openAuth(mode)};
+
+function validateOrderInputs(){
+  const link=$('order-link').value.trim(),qty=Number($('order-qty').value),s=(DATA[platform].services[category]||[])[selectedService];
+  if(!link||!/^https?:\/\//i.test(link))return{error:'Add a valid public link starting with https://'};
+  if(!qty||qty<100)return{error:'Quantity must be at least 100 units'};
+  if(!s)return{error:'Choose a service first'};
+  return{link,qty,s};
+}
+
+async function placeOrder(){
+  if(orderPending)return;
+  const user=firebaseAuth.currentUser;
+  if(!user){$('order-status').textContent='Log in to create a payment';openAuth('login');return}
+  const check=validateOrderInputs();
+  $('order-status').textContent='';
+  if(check.error){$('order-status').textContent=check.error;return}
+  const{link,qty,s}=check;
+  const payCurrency=$('pay-currency').value,currency=PAY_CURRENCIES[payCurrency];
+  const total=Number(((qty/1000)*s[2]).toFixed(2));
+  orderPending=true;
+  const btn=document.getElementById('place-order-btn');
+  setButtonLoading(btn,true,'Creating payment…','Place order');
+  $('order-status').textContent='Creating payment…';
+  try{
+    const response=await fetch(PAYMENT_API+'/create-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({price_amount:total,order_id:'order-'+user.uid.slice(0,8)+'-'+Date.now(),order_description:s[0]+' · '+qty+' units',pay_currency:payCurrency,is_fixed_rate:false})});
+    let data;
+    try{data=await response.json()}catch{throw new Error('Payment service returned an unexpected response')}
+    if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be created');
+    currentPaymentId=data.payment_id;
+    currentPayCurrency=payCurrency;
+    currentTransactionRef=firebaseDb.collection('users').doc(user.uid).collection('transactions').doc(String(data.payment_id));
+    const record={paymentId:String(data.payment_id),service:s[0],platform,category,quantity:qty,link,priceAmount:total,payAmount:Number(data.pay_amount)||0,payCurrency,currencyLabel:currency.label,network:currency.network,status:data.payment_status||'waiting'};
+    await currentTransactionRef.set({...record,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(error=>console.warn('Transaction history could not be saved',error.message));
+    saveLocalTransaction(user,{...record,createdAt:new Date().toISOString()});
+    localStorage.setItem(latestPaymentKey(user),JSON.stringify({id:String(currentPaymentId),currency:payCurrency,createdAt:Date.now()}));
+    armLatestPayment(user);
+    $('payment-amount').textContent=(data.pay_amount??'—')+' '+currency.label;
+    $('payment-address').textContent=data.pay_address||'Payment address unavailable';
+    $('payment-status').textContent='Waiting for payment on the '+currency.network+' network';
+    $('payment-overlay').classList.remove('payment-complete','payment-failed');
+    $('payment-overlay').classList.add('open');
+    pulseEl(document.querySelector('#payment-overlay .modal'));
+    paintPayment('pending');
+    startPaymentPolling();
+    $('order-status').textContent='';
+  }catch(error){
+    const message=(error instanceof TypeError)?'Network error — check your connection and try again':(error.message||'Payment could not be created');
+    $('order-status').textContent=message;
+  }finally{
+    orderPending=false;
+    setButtonLoading(btn,false,'','Place order');
+  }
+}
+
+function closePayment(){$('payment-overlay').classList.remove('open')}
+
+async function copyPaymentAddress(){
+  const address=$('payment-address').textContent;
+  if(!address||address==='—'||address==='Payment address unavailable')return;
+  try{await navigator.clipboard.writeText(address)}catch{$('payment-status').textContent='Could not copy address — copy it manually';return}
+  $('payment-status').textContent='Address copied';
+  pulseEl($('payment-status'));
+  paintPayment(cleanPaymentCard.classList.contains('complete')?'complete':cleanPaymentCard.classList.contains('failed')?'failed':'pending');
+}
+
+async function cancelPayment(){
+  if(!currentPaymentId)return;
+  if(!confirm('Cancel this payment? You can always start a new order later.'))return;
+  stopPaymentPolling();
+  cancelledPaymentIds.add(String(currentPaymentId));
+  const cancelledId=currentPaymentId,cancelledRef=currentTransactionRef;
+  const btn=document.getElementById('cancel-payment-btn');
+  setButtonLoading(btn,true,'Cancelling…','Cancel payment');
+  try{
+    if(cancelledRef)await cancelledRef.set({status:'cancelled',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(error=>console.warn('Could not update transaction',error.message));
+    const user=firebaseAuth.currentUser;
+    if(user){
+      saveLocalTransaction(user,{paymentId:String(cancelledId),status:'cancelled'});
+      const key=latestPaymentKey(user);
+      const cached=readLatestPayment(user);
+      if(cached&&String(cached.id)===String(cancelledId))localStorage.removeItem(key);
+      armLatestPayment(user);
+    }
+    $('payment-status').textContent='Payment cancelled';
+    paintPayment('failed');
+    if(String(currentPaymentId)===String(cancelledId)){currentPaymentId=null;currentTransactionRef=null}
+    setTimeout(closePayment,600);
+  }catch(error){
+    $('payment-status').textContent=(error instanceof TypeError)?'Network error — could not cancel, try again':(error.message||'Could not cancel payment, try again');
+    paintPayment('pending');
+  }finally{
+    setButtonLoading(btn,false,'','Cancel payment');
+  }
+}
+
+async function checkPayment(silent){
+  if(!currentPaymentId){if(!silent)$('payment-status').textContent='No active payment to check';return}
+  if(cancelledPaymentIds.has(String(currentPaymentId)))return;
+  const checkedId=currentPaymentId,checkedRef=currentTransactionRef;
+  const btn=document.getElementById('check-payment-btn');
+  if(!silent){setButtonLoading(btn,true,'Checking…','Check payment');$('payment-status').textContent='Checking payment…'}
+  try{
+    const response=await fetch(PAYMENT_API+'/payment-status?id='+encodeURIComponent(checkedId));
+    let data;
+    try{data=await response.json()}catch{throw new Error('Payment service returned an unexpected response')}
+    if(!response.ok)throw new Error(data.message||data.error||'Could not check payment status');
+    if(cancelledPaymentIds.has(String(checkedId)))return;
+    const status=data.payment_status;
+    if(checkedRef)checkedRef.set({status:status||'waiting',payAmount:Number(data.pay_amount)||0,actuallyPaid:Number(data.actually_paid)||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(error=>console.warn('Transaction status could not be saved',error.message));
+    const user=firebaseAuth.currentUser;
+    if(user)saveLocalTransaction(user,{paymentId:String(checkedId),status:status||'waiting',payAmount:Number(data.pay_amount)||0});
+    let kind='pending';
+    if(status==='finished'){$('payment-status').textContent='Payment complete Your order is confirmed';kind='complete'}
+    else if(['confirmed','sending'].includes(status)){$('payment-status').textContent='Payment confirmed Finalizing'}
+    else if(status==='partially_paid'){$('payment-status').textContent='Payment is incomplete Send the remaining amount'}
+    else if(['failed','expired'].includes(status)){$('payment-status').textContent='Payment '+status+'. Create a new payment';kind='failed'}
+    else{$('payment-status').textContent='Payment not received yet'}
+    paintPayment(kind);
+    if(kind!=='pending'){
+      stopPaymentPolling();
+      if(user){const key=latestPaymentKey(user);const cached=readLatestPayment(user);if(cached&&String(cached.id)===String(checkedId))localStorage.removeItem(key);armLatestPayment(user)}
+    }
+  }catch(error){
+    const message=(error instanceof TypeError)?'Network error — could not reach the payment service':(error.message||'Could not check payment Try again');
+    $('payment-status').textContent=message;
+    paintPayment('pending');
+  }finally{
+    if(!silent)setButtonLoading(btn,false,'','Check payment');
+  }
+}
+
 </script>
 <script>
 const pulsePassword=document.getElementById('auth-password');
@@ -168,6 +378,34 @@ function pulseAuthError(error){
   const code=error?.code||'';
   return code==='auth/invalid-credential'?'Email or password is incorrect':code==='auth/email-already-in-use'?'This email is already registered':code==='auth/weak-password'?'Password is too weak':code==='auth/invalid-email'?'Enter a valid email address':code==='auth/popup-closed-by-user'?'Google sign-in was cancelled':(error?.message||'Could not sign in right now');
 }
+</script>
+<script>
+(function(){
+var done=new Set();
+function warm(url){
+  if(!url||done.has(url))return;
+  done.add(url);
+  var link=document.createElement('link');
+  link.rel='prefetch';
+  link.href=url;
+  document.head.appendChild(link);
+}
+function isLocalPage(href){
+  return /^(index|admin|account_new)\.html(#.*)?$/.test(href);
+}
+document.addEventListener('pointerenter',function(e){
+  var a=e.target.closest&&e.target.closest('a[href]');
+  if(a&&isLocalPage(a.getAttribute('href')))warm(a.getAttribute('href'));
+},true);
+document.addEventListener('touchstart',function(e){
+  var a=e.target.closest&&e.target.closest('a[href]');
+  if(a&&isLocalPage(a.getAttribute('href')))warm(a.getAttribute('href'));
+},{passive:true,capture:true});
+document.addEventListener('focusin',function(e){
+  var a=e.target.closest&&e.target.closest('a[href]');
+  if(a&&isLocalPage(a.getAttribute('href')))warm(a.getAttribute('href'));
+});
+})();
 </script>
 </body>
 </html>
