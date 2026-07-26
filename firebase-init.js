@@ -11,6 +11,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 window.firebaseAuth = firebase.auth();
 window.firebaseDb = firebase.firestore();
+window.firebaseDb.enablePersistence({ synchronizeTabs: true }).catch(function (error) {
+  // failed-precondition: multiple tabs open without synchronizeTabs support in this browser
+  // unimplemented: current browser doesn't support offline persistence
+  console.warn("Firestore offline persistence not enabled:", error.code);
+});
 window.firebasePersistence = window.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 window.getUserRole = async function (uid) {
