@@ -3,21 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <title>Admin — PULSE</title>
 <style>
 :root{--bg:#000;--panel:rgba(18,18,22,.72);--line:rgba(255,255,255,.14);--text:#fff;--muted:#aaaab5;--accent:#8b7cff;--accent2:#e36bd7;--danger:#ff6b7a}body.light{--bg:#f6f7fb;--panel:rgba(255,255,255,.72);--line:rgba(24,26,40,.16);--text:#171821;--muted:#656977;--accent:#5b4bdb;--accent2:#d34fc0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:500 15px/1.5 Inter,system-ui,sans-serif}body.auth-check #login-panel,body.auth-check #admin-app{display:none!important}button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}nav{position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg),transparent 20%);backdrop-filter:blur(20px)}.nav{height:70px;display:flex;align-items:center;gap:10px}.brand{font-size:20px;font-weight:850;margin-right:auto}.brand i{font-style:normal;color:var(--accent)}.btn{border:1px solid var(--line);border-radius:999px;padding:10px 15px;background:color-mix(in srgb,var(--panel),transparent 8%);color:var(--text);font-weight:750}.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}.btn.danger{color:#fff;border-color:rgba(255,107,122,.45);background:rgba(255,107,122,.12)}main{padding:46px 0 80px}.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:22px}.head h1{font-size:42px;margin:0;letter-spacing:-.05em}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);border-radius:20px;padding:22px;background:var(--panel);backdrop-filter:blur(22px)}.panel.wide{grid-column:1/-1}.panel h2{margin:0 0 16px}.form{display:grid;gap:12px}.field{display:grid;gap:6px;color:var(--muted);font-size:13px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:color-mix(in srgb,var(--panel),transparent 8%);color:var(--text);outline:none}.field textarea{min-height:96px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}.service-form{display:grid;grid-template-columns:1fr 1fr 1.2fr 2fr .7fr auto;gap:9px;align-items:end}.services{display:grid;gap:8px;margin-top:18px}.service-row{display:grid;grid-template-columns:1fr 1fr 1.3fr 2fr .7fr auto auto;gap:9px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:13px}.service-row input{min-width:0;width:100%;border:1px solid var(--line);border-radius:9px;padding:9px;background:color-mix(in srgb,var(--panel),transparent 8%);color:var(--text)}.service-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.login{width:min(420px,calc(100% - 32px));margin:12vh auto}.hidden{display:none!important}.status{min-height:22px;color:var(--accent);margin-top:10px}@media(max-width:850px){.grid{grid-template-columns:1fr}.panel.wide{grid-column:auto}.service-form,.service-row{grid-template-columns:1fr 1fr}}
+.sky-scene{position:fixed;inset:0;z-index:-3;overflow:hidden;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.sky-scene:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,transparent 0%,transparent 35%,var(--bg) 100%),linear-gradient(180deg,color-mix(in srgb,var(--bg),transparent 15%) 0%,transparent 30%,transparent 65%,var(--bg) 100%)}
+.sky-scene.sky-day.active{opacity:.28}
+.sky-scene.sky-night.active{opacity:.5}
+.sky-track{position:absolute;top:0;left:0;height:100%;width:200%;display:flex;animation:sky-drift 140s linear infinite}
+.sky-scene.sky-night .sky-track{animation-duration:220s}
+.sky-img{width:50%;height:100%;object-fit:cover;display:block;flex-shrink:0}
+@keyframes sky-drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.sky-track{animation:none}}
+/* Micro-animations */
+.btn,.field input,.field textarea,.field select,.service-row,input,select,textarea{transition:transform .16s ease,box-shadow .18s ease,border-color .18s ease,background-color .16s ease}
+.btn:hover{transform:translateY(-1px) scale(1.02)}
+.btn:active{transform:scale(.97)}
+.field input:focus,.field textarea:focus,.field select:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent),transparent 80%)}
+.service-row:hover{transform:translateY(-1px)}
+@keyframes pulse-shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+.shake{animation:pulse-shake .38s cubic-bezier(.36,.07,.19,.97) both}
+.field-error{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(255,107,122,.2)!important}
+@keyframes success-bounce{0%{transform:scale(1)}45%{transform:scale(1.05)}100%{transform:scale(1)}}
+.success-pulse{animation:success-bounce .35s ease}
+.status{transition:opacity .2s ease}
 /* Optimized cursor shader */
 </style>
 </head>
 <body class="auth-check">
 <script>if(localStorage.getItem("pulse-theme")==="light")document.body.classList.add("light")</script>
+<div class="sky-scene sky-day" id="sky-day" aria-hidden="true"><div class="sky-track"><img class="sky-img" src="day-sky.jpg" alt=""><img class="sky-img" src="day-sky.jpg" alt=""></div></div>
+<div class="sky-scene sky-night" id="sky-night" aria-hidden="true"><div class="sky-track"><img class="sky-img" src="night-sky.jpg" alt=""><img class="sky-img" src="night-sky.jpg" alt=""></div></div>
 <section class="panel login" id="login-panel">
   <h1>Admin login</h1>
   <p class="muted">Sign in with the administrator account</p>
   <form class="form" id="admin-login">
-    <label class="field">Email<input id="login-email" type="email" required></label>
-    <label class="field">Password<input id="login-password" type="password" required></label>
+    <label class="field">Email<input id="login-email" type="email" required maxlength="254"></label>
+    <label class="field">Password<input id="login-password" type="password" required minlength="6" maxlength="128"></label>
     <button class="btn primary">Log in</button>
   </form>
   <div class="status" id="login-status"></div>
@@ -71,9 +99,11 @@
 <script src="firebase-init.js"></script>
 <script>
 const $=id=>document.getElementById(id);
+function shakeEl(el){if(!el)return;el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake")}
+function pulseEl(el){if(!el)return;el.classList.remove("success-pulse");void el.offsetWidth;el.classList.add("success-pulse")}
 let verifiedAdmin=null;
 const themeToggle=$("theme-toggle");
-function applyAdminTheme(light){document.body.classList.toggle("light",light);themeToggle.textContent=light?"\u2600":"\u263e";localStorage.setItem("pulse-theme",light?"light":"dark")}
+function applyAdminTheme(light){document.body.classList.toggle("light",light);themeToggle.textContent=light?"\u2600":"\u263e";localStorage.setItem("pulse-theme",light?"light":"dark");document.getElementById("sky-day").classList.toggle("active",light);document.getElementById("sky-night").classList.toggle("active",!light)}
 themeToggle.onclick=()=>applyAdminTheme(!document.body.classList.contains("light"));
 applyAdminTheme(localStorage.getItem("pulse-theme")==="light");
 const defaults={heroEyebrow:"Simple social growth",heroTitle1:"Real engagement",heroTitle2:"Clear control",heroDescription:"Followers, likes and views for the platforms you use Pick a service, choose a quantity and place an order in seconds"};
@@ -101,7 +131,7 @@ async function verifyAdmin(user){
 $("admin-login").onsubmit=async e=>{
   e.preventDefault();$("login-status").textContent="Signing in...";
   try{await firebasePersistence;const result=await firebaseAuth.signInWithEmailAndPassword($("login-email").value,$("login-password").value);await verifyAdmin(result.user)}
-  catch(error){document.body.classList.remove("auth-check");$("login-panel").classList.remove("hidden");$("login-status").textContent=error.message}
+  catch(error){document.body.classList.remove("auth-check");$("login-panel").classList.remove("hidden");$("login-status").textContent=error.message;shakeEl($("login-panel"));$("login-password").classList.add("field-error");setTimeout(()=>$("login-password").classList.remove("field-error"),900)}
 };
 $("logout").onclick=async()=>{localStorage.removeItem("pulse-auth-label");await firebaseAuth.signOut();location.href="index.html"};
 firebaseAuth.onAuthStateChanged(async user=>{
@@ -120,28 +150,58 @@ async function loadContent(){
 }
 $("content-form").onsubmit=async e=>{
   e.preventDefault();
-  try{await firebaseDb.collection("siteContent").doc("main").set({heroEyebrow:$("hero-eyebrow").value.trim(),heroTitle1:$("hero-title-1").value.trim(),heroTitle2:$("hero-title-2").value.trim(),heroDescription:$("hero-description").value.trim()},{merge:true});$("content-status").textContent="Saved"}
-  catch(error){$("content-status").textContent=error.message}
+  try{await firebaseDb.collection("siteContent").doc("main").set({heroEyebrow:$("hero-eyebrow").value.trim(),heroTitle1:$("hero-title-1").value.trim(),heroTitle2:$("hero-title-2").value.trim(),heroDescription:$("hero-description").value.trim()},{merge:true});$("content-status").textContent="Saved";pulseEl($("content-status"))}
+  catch(error){$("content-status").textContent=error.message;shakeEl($("content-form"))}
 };
 $("faq-form").onsubmit=async e=>{
   e.preventDefault();
-  try{const faq=JSON.parse($("faq-json").value||"[]");await firebaseDb.collection("siteContent").doc("main").set({faq},{merge:true});$("faq-status").textContent="Saved"}
-  catch(error){$("faq-status").textContent=error.message}
+  try{const faq=JSON.parse($("faq-json").value||"[]");await firebaseDb.collection("siteContent").doc("main").set({faq},{merge:true});$("faq-status").textContent="Saved";pulseEl($("faq-status"))}
+  catch(error){$("faq-status").textContent=error.message;shakeEl($("faq-form"))}
 };
 
 $("service-form").onsubmit=async e=>{
   e.preventDefault();
-  try{await firebaseDb.collection("services").add({platform:$("service-platform").value,category:$("service-category").value.trim(),name:$("service-name").value.trim(),description:$("service-description").value.trim(),price:Number($("service-price").value),createdAt:firebase.firestore.FieldValue.serverTimestamp()});e.target.reset();$("service-status").textContent="Service added";await loadServices()}
-  catch(error){$("service-status").textContent=error.message}
+  try{const docRef=await firebaseDb.collection("services").add({platform:$("service-platform").value,category:$("service-category").value.trim(),name:$("service-name").value.trim(),description:$("service-description").value.trim(),price:Number($("service-price").value),createdAt:firebase.firestore.FieldValue.serverTimestamp()});const s={platform:$("service-platform").value,category:$("service-category").value.trim(),name:$("service-name").value.trim(),description:$("service-description").value.trim(),price:Number($("service-price").value)};appendServiceRow(docRef.id,s);e.target.reset();$("service-status").textContent="Service added";pulseEl($("service-status"))}
+  catch(error){$("service-status").textContent=error.message;shakeEl($("service-form"))}
 };
+function serviceRowHtml(id,s){return `<div class="service-row" data-id="${id}"><input data-key="platform" value="${escapeHtml(s.platform)}"><input data-key="category" value="${escapeHtml(s.category)}"><input data-key="name" value="${escapeHtml(s.name)}"><input data-key="description" value="${escapeHtml(s.description)}"><input data-key="price" type="number" min="0" step=".01" value="${Number(s.price)}"><button class="btn" onclick="saveService('${id}')">Save</button><button class="btn danger" onclick="deleteService('${id}')">Delete</button></div>`}
+function appendServiceRow(id,s){const empty=$("service-list").querySelector(".muted");if(empty)empty.parentElement.innerHTML="";$("service-list").insertAdjacentHTML("beforeend",serviceRowHtml(id,s))}
 async function loadServices(){
   const snap=await firebaseDb.collection("services").get();
-  $("service-list").innerHTML=snap.docs.map(doc=>{const s=doc.data();return `<div class="service-row" data-id="${doc.id}"><input data-key="platform" value="${escapeHtml(s.platform)}"><input data-key="category" value="${escapeHtml(s.category)}"><input data-key="name" value="${escapeHtml(s.name)}"><input data-key="description" value="${escapeHtml(s.description)}"><input data-key="price" type="number" min="0" step=".01" value="${Number(s.price)}"><button class="btn" onclick="saveService('${doc.id}')">Save</button><button class="btn danger" onclick="deleteService('${doc.id}')">Delete</button></div>`}).join("")||'<div class="muted">No Firestore services yet Import the built-in defaults</div>';
+  $("service-list").innerHTML=snap.docs.map(doc=>serviceRowHtml(doc.id,doc.data())).join("")||'<div class="muted">No Firestore services yet Import the built-in defaults</div>';
 }
 function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
-async function saveService(id){const row=document.querySelector(`[data-id="${id}"]`),data={};row.querySelectorAll("[data-key]").forEach(input=>data[input.dataset.key]=input.dataset.key==="price"?Number(input.value):input.value.trim());await firebaseDb.collection("services").doc(id).update(data);$("service-status").textContent="Service updated"}
-$("seed-services").onclick=async()=>{for(const [platform,category,name,description,price] of defaultServices){const id=`${platform}-${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g,"-");await firebaseDb.collection("services").doc(id).set({platform,category,name,description,price},{merge:true})}$("service-status").textContent="Defaults imported";await loadServices()};
-async function deleteService(id){if(!confirm("Delete this service?"))return;await firebaseDb.collection("services").doc(id).delete();await loadServices()}
+async function saveService(id){const row=document.querySelector(`[data-id="${id}"]`),data={};row.querySelectorAll("[data-key]").forEach(input=>data[input.dataset.key]=input.dataset.key==="price"?Number(input.value):input.value.trim());await firebaseDb.collection("services").doc(id).update(data);$("service-status").textContent="Service updated";pulseEl($("service-status"))}
+$("seed-services").onclick=async()=>{for(const [platform,category,name,description,price] of defaultServices){const id=`${platform}-${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g,"-");await firebaseDb.collection("services").doc(id).set({platform,category,name,description,price},{merge:true})}$("service-status").textContent="Defaults imported";pulseEl($("service-status"));await loadServices()};
+async function deleteService(id){if(!confirm("Delete this service?"))return;await firebaseDb.collection("services").doc(id).delete();const row=document.querySelector(`[data-id="${id}"]`);if(row)row.remove();if(!$("service-list").children.length)$("service-list").innerHTML='<div class="muted">No Firestore services yet Import the built-in defaults</div>'}
+</script>
+<script>
+(function(){
+var done=new Set();
+function warm(url){
+  if(!url||done.has(url))return;
+  done.add(url);
+  var link=document.createElement('link');
+  link.rel='prefetch';
+  link.href=url;
+  document.head.appendChild(link);
+}
+function isLocalPage(href){
+  return /^(index|admin|account_new)\.html(#.*)?$/.test(href);
+}
+document.addEventListener('pointerenter',function(e){
+  var a=e.target.closest&&e.target.closest('a[href]');
+  if(a&&isLocalPage(a.getAttribute('href')))warm(a.getAttribute('href'));
+},true);
+document.addEventListener('touchstart',function(e){
+  var a=e.target.closest&&e.target.closest('a[href]');
+  if(a&&isLocalPage(a.getAttribute('href')))warm(a.getAttribute('href'));
+},{passive:true,capture:true});
+document.addEventListener('focusin',function(e){
+  var a=e.target.closest&&e.target.closest('a[href]');
+  if(a&&isLocalPage(a.getAttribute('href')))warm(a.getAttribute('href'));
+});
+})();
 </script>
 </body>
 </html>
