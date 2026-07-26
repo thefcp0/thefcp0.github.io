@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — PULSE</title>
+<style>
+:root{--bg:#000;--panel:rgba(18,18,22,.72);--line:rgba(255,255,255,.14);--text:#fff;--muted:#aaaab5;--accent:#8b7cff;--accent2:#e36bd7;--danger:#ff6b7a}body.light{--bg:#f6f7fb;--panel:rgba(255,255,255,.72);--line:rgba(24,26,40,.16);--text:#171821;--muted:#656977;--accent:#5b4bdb;--accent2:#d34fc0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:500 15px/1.5 Inter,system-ui,sans-serif}body.auth-check #login-panel,body.auth-check #admin-app{display:none!important}button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}nav{position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg),transparent 20%);backdrop-filter:blur(20px)}.nav{height:70px;display:flex;align-items:center;gap:10px}.brand{font-size:20px;font-weight:850;margin-right:auto}.brand i{font-style:normal;color:var(--accent)}.btn{border:1px solid var(--line);border-radius:999px;padding:10px 15px;background:color-mix(in srgb,var(--panel),transparent 8%);color:var(--text);font-weight:750}.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}.btn.danger{color:#fff;border-color:rgba(255,107,122,.45);background:rgba(255,107,122,.12)}main{padding:46px 0 80px}.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:22px}.head h1{font-size:42px;margin:0;letter-spacing:-.05em}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);border-radius:20px;padding:22px;background:var(--panel);backdrop-filter:blur(22px)}.panel.wide{grid-column:1/-1}.panel h2{margin:0 0 16px}.form{display:grid;gap:12px}.field{display:grid;gap:6px;color:var(--muted);font-size:13px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:color-mix(in srgb,var(--panel),transparent 8%);color:var(--text);outline:none}.field textarea{min-height:96px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}.service-form{display:grid;grid-template-columns:1fr 1fr 1.2fr 2fr .7fr auto;gap:9px;align-items:end}.services{display:grid;gap:8px;margin-top:18px}.service-row{display:grid;grid-template-columns:1fr 1fr 1.3fr 2fr .7fr auto auto;gap:9px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:13px}.service-row input{min-width:0;width:100%;border:1px solid var(--line);border-radius:9px;padding:9px;background:color-mix(in srgb,var(--panel),transparent 8%);color:var(--text)}.service-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.login{width:min(420px,calc(100% - 32px));margin:12vh auto}.hidden{display:none!important}.status{min-height:22px;color:var(--accent);margin-top:10px}@media(max-width:850px){.grid{grid-template-columns:1fr}.panel.wide{grid-column:auto}.service-form,.service-row{grid-template-columns:1fr 1fr}}
+/* Optimized cursor shader */
+</style>
+</head>
+<body class="auth-check">
+<script>if(localStorage.getItem("pulse-theme")==="light")document.body.classList.add("light")</script>
+<section class="panel login" id="login-panel">
+  <h1>Admin login</h1>
+  <p class="muted">Sign in with the administrator account</p>
+  <form class="form" id="admin-login">
+    <label class="field">Email<input id="login-email" type="email" required></label>
+    <label class="field">Password<input id="login-password" type="password" required></label>
+    <button class="btn primary">Log in</button>
+  </form>
+  <div class="status" id="login-status"></div>
+</section>
+
+<div id="admin-app" class="hidden">
+<nav><div class="wrap nav"><div class="brand"><i>✦</i> PULSE Admin</div><a class="btn" href="index.html">Open site</a><button class="btn" id="theme-toggle" type="button">&#9790;</button><button class="btn" id="logout">Log out</button></div></nav>
+<main class="wrap">
+  <section class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px"><div><strong>Personal cabinet</strong><div class="muted">View your profile and payment history</div></div><a class="btn primary" href="account_new.html">Open cabinet</a></section>
+  <div class="head"><div><h1>Site editor</h1><div class="muted" id="admin-email"></div></div></div>
+  <div class="grid">
+    <section class="panel">
+      <h2>Hero section</h2>
+      <form class="form" id="content-form">
+        <label class="field">Eyebrow<input id="hero-eyebrow"></label>
+        <label class="field">Title, first line<input id="hero-title-1"></label>
+        <label class="field">Title, accent line<input id="hero-title-2"></label>
+        <label class="field">Description<textarea id="hero-description"></textarea></label>
+        <button class="btn primary">Save content</button>
+      </form>
+      <div class="status" id="content-status"></div>
+    </section>
+    <section class="panel">
+      <h2>FAQ</h2>
+      <form class="form" id="faq-form">
+        <label class="field">FAQ JSON<textarea id="faq-json" placeholder='[{"question":"...","answer":"..."}]'></textarea></label>
+        <button class="btn primary">Save FAQ</button>
+      </form>
+      <div class="status" id="faq-status"></div>
+    </section>
+    <section class="panel wide">
+      <div class="service-head"><h2>Services</h2><button class="btn" id="seed-services" type="button">Import defaults</button></div>
+      <form class="service-form" id="service-form">
+        <label class="field">Platform<select id="service-platform"><option>instagram</option><option>tiktok</option><option>youtube</option><option>telegram</option></select></label>
+        <label class="field">Category<input id="service-category" required></label>
+        <label class="field">Name<input id="service-name" required></label>
+        <label class="field">Description<input id="service-description" required></label>
+        <label class="field">Price / 1k<input id="service-price" type="number" min="0" step=".01" required></label>
+        <button class="btn primary">Add</button>
+      </form>
+      <div class="status" id="service-status"></div>
+      <div class="services" id="service-list"></div>
+    </section>
+  </div>
+</main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let verifiedAdmin=null;
+const themeToggle=$("theme-toggle");
+function applyAdminTheme(light){document.body.classList.toggle("light",light);themeToggle.textContent=light?"\u2600":"\u263e";localStorage.setItem("pulse-theme",light?"light":"dark")}
+themeToggle.onclick=()=>applyAdminTheme(!document.body.classList.contains("light"));
+applyAdminTheme(localStorage.getItem("pulse-theme")==="light");
+const defaults={heroEyebrow:"Simple social growth",heroTitle1:"Real engagement",heroTitle2:"Clear control",heroDescription:"Followers, likes and views for the platforms you use Pick a service, choose a quantity and place an order in seconds"};
+const defaultServices=[
+["instagram","Followers","HQ Followers","Active-looking followers with gradual delivery",4.8],["instagram","Followers","Real Followers","Steady delivery for public profiles",7.2],["instagram","Likes","Post Likes","Natural-looking likes for a post",1.9],["instagram","Views","Video Views","Fast, stable video views",1.1],
+["tiktok","Followers","TikTok Followers","Gradual profile growth",5.4],["tiktok","Likes","Video Likes","Likes for a selected video",2.2],["tiktok","Views","Instant Views","Views with a fast start",1.3],
+["youtube","Subscribers","Channel Subscribers","Steady channel growth",8.4],["youtube","Views","Video Views","Realistic delivery for videos",1.6],["youtube","Likes","Video Likes","Likes for public videos",2.5],
+["telegram","Members","Channel Members","Gradual member delivery",6.9],["telegram","Views","Post Views","Views for public posts",1.2],["telegram","Reactions","Post Reactions","Reactions for public posts",2.8]
+];
+
+async function verifyAdmin(user){
+  if(!user)return false;
+  const role=await getUserRole(user.uid);
+  if(role!=="admin"){await firebaseAuth.signOut();throw new Error("This account is not an administrator");}
+  verifiedAdmin=user;
+  $("login-panel").classList.add("hidden");
+  $("admin-app").classList.remove("hidden");
+  $("admin-email").textContent=user.email;
+  localStorage.setItem("pulse-auth-label","Admin");
+  document.body.classList.remove("auth-check");
+  await Promise.all([loadContent(),loadServices()]);
+  return true;
+}
+
+$("admin-login").onsubmit=async e=>{
+  e.preventDefault();$("login-status").textContent="Signing in...";
+  try{await firebasePersistence;const result=await firebaseAuth.signInWithEmailAndPassword($("login-email").value,$("login-password").value);await verifyAdmin(result.user)}
+  catch(error){document.body.classList.remove("auth-check");$("login-panel").classList.remove("hidden");$("login-status").textContent=error.message}
+};
+$("logout").onclick=async()=>{localStorage.removeItem("pulse-auth-label");await firebaseAuth.signOut();location.href="index.html"};
+firebaseAuth.onAuthStateChanged(async user=>{
+  if(!user){verifiedAdmin=null;$("admin-app").classList.add("hidden");$("login-panel").classList.remove("hidden");document.body.classList.remove("auth-check");return}
+  try{await verifyAdmin(user)}catch(error){document.body.classList.remove("auth-check");$("login-panel").classList.remove("hidden");$("login-status").textContent=error.message}
+});
+
+async function loadContent(){
+  const snap=await firebaseDb.collection("siteContent").doc("main").get();
+  const data=snap.exists?snap.data():defaults;
+  $("hero-eyebrow").value=data.heroEyebrow||defaults.heroEyebrow;
+  $("hero-title-1").value=data.heroTitle1||defaults.heroTitle1;
+  $("hero-title-2").value=data.heroTitle2||defaults.heroTitle2;
+  $("hero-description").value=data.heroDescription||defaults.heroDescription;
+  $("faq-json").value=JSON.stringify(data.faq||[],null,2);
+}
+$("content-form").onsubmit=async e=>{
+  e.preventDefault();
+  try{await firebaseDb.collection("siteContent").doc("main").set({heroEyebrow:$("hero-eyebrow").value.trim(),heroTitle1:$("hero-title-1").value.trim(),heroTitle2:$("hero-title-2").value.trim(),heroDescription:$("hero-description").value.trim()},{merge:true});$("content-status").textContent="Saved"}
+  catch(error){$("content-status").textContent=error.message}
+};
+$("faq-form").onsubmit=async e=>{
+  e.preventDefault();
+  try{const faq=JSON.parse($("faq-json").value||"[]");await firebaseDb.collection("siteContent").doc("main").set({faq},{merge:true});$("faq-status").textContent="Saved"}
+  catch(error){$("faq-status").textContent=error.message}
+};
+
+$("service-form").onsubmit=async e=>{
+  e.preventDefault();
+  try{await firebaseDb.collection("services").add({platform:$("service-platform").value,category:$("service-category").value.trim(),name:$("service-name").value.trim(),description:$("service-description").value.trim(),price:Number($("service-price").value),createdAt:firebase.firestore.FieldValue.serverTimestamp()});e.target.reset();$("service-status").textContent="Service added";await loadServices()}
+  catch(error){$("service-status").textContent=error.message}
+};
+async function loadServices(){
+  const snap=await firebaseDb.collection("services").get();
+  $("service-list").innerHTML=snap.docs.map(doc=>{const s=doc.data();return `<div class="service-row" data-id="${doc.id}"><input data-key="platform" value="${escapeHtml(s.platform)}"><input data-key="category" value="${escapeHtml(s.category)}"><input data-key="name" value="${escapeHtml(s.name)}"><input data-key="description" value="${escapeHtml(s.description)}"><input data-key="price" type="number" min="0" step=".01" value="${Number(s.price)}"><button class="btn" onclick="saveService('${doc.id}')">Save</button><button class="btn danger" onclick="deleteService('${doc.id}')">Delete</button></div>`}).join("")||'<div class="muted">No Firestore services yet Import the built-in defaults</div>';
+}
+function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
+async function saveService(id){const row=document.querySelector(`[data-id="${id}"]`),data={};row.querySelectorAll("[data-key]").forEach(input=>data[input.dataset.key]=input.dataset.key==="price"?Number(input.value):input.value.trim());await firebaseDb.collection("services").doc(id).update(data);$("service-status").textContent="Service updated"}
+$("seed-services").onclick=async()=>{for(const [platform,category,name,description,price] of defaultServices){const id=`${platform}-${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g,"-");await firebaseDb.collection("services").doc(id).set({platform,category,name,description,price},{merge:true})}$("service-status").textContent="Defaults imported";await loadServices()};
+async function deleteService(id){if(!confirm("Delete this service?"))return;await firebaseDb.collection("services").doc(id).delete();await loadServices()}
+</script>
+</body>
+</html>
