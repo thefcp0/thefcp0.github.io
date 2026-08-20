@@ -64,17 +64,8 @@ nav,.panel,.online-pill,.meta-pill,.quick-action,.side-link span,.btn{background
 const body=document.body,theme=document.getElementById('theme-toggle');function applyTheme(light){body.classList.toggle('light',light);theme.textContent=light?'\u2600':'\u263e';theme.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');localStorage.setItem('pulse-theme',light?'light':'dark');document.getElementById('sky-day').classList.toggle('active',light);document.getElementById('sky-night').classList.toggle('active',!light)}theme.onclick=()=>applyTheme(!body.classList.contains('light'));applyTheme(localStorage.getItem('pulse-theme')==='light');function toggleNotify(){const b=document.getElementById('notify-toggle');b.textContent=b.textContent==='On'?'Off':'On';b.classList.remove('success-pulse');void b.offsetWidth;b.classList.add('success-pulse')}function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]))}function transactionDate(value){if(!value)return'Just now';const date=typeof value.toDate==='function'?value.toDate():new Date(value);return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(date)}function statusLabel(status){return({waiting:'Waiting',confirming:'Confirming',confirmed:'Confirmed',sending:'Processing',finished:'Completed',partially_paid:'Partially paid',failed:'Failed',expired:'Expired',cancelled:'Cancelled'}[status]||status||'Waiting')}function renderTransactions(items){items.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));const active=items.filter(item=>!['finished','failed','expired','cancelled'].includes(item.status)).length,completed=items.filter(item=>item.status==='finished').length;document.getElementById('stat-total').textContent=items.length;document.getElementById('stat-active').textContent=active;document.getElementById('stat-completed').textContent=completed;document.getElementById('transaction-list').innerHTML=items.length?items.map(item=>`<div class="order" data-doc-id="${escapeHtml(item._id||'')}"><strong>${escapeHtml(item.platform||'Service')} · ${escapeHtml(item.service||'Order')}<span class="muted">#${escapeHtml(item.paymentId)} · ${Number(item.quantity||0).toLocaleString()} units · ${escapeHtml(transactionDate(item.createdAt))}</span></strong><span><span class="status ${escapeHtml(item.status)}">${escapeHtml(statusLabel(item.status))}</span></span><span class="muted">${escapeHtml(item.payAmount||0)} ${escapeHtml(item.currencyLabel||item.payCurrency||'')}</span><span class="price">$${Number(item.priceAmount||0).toFixed(2)}</span><button class="order-delete" type="button" data-delete-id="${escapeHtml(item._id||'')}" ${item._id?'':'disabled'}>Delete</button></div>`).join(''):'<div class="empty">No transactions yet Your new payments will appear here</div>';document.getElementById('activity-list').innerHTML=items.length?items.slice(0,3).map(item=>`<div class="activity-row"><i class="activity-dot"></i><div><p>${escapeHtml(item.service||'Payment')} — ${escapeHtml(statusLabel(item.status))}</p><time>${escapeHtml(transactionDate(item.createdAt))}</time></div></div>`).join(''):'<div class="empty">No transaction activity yet</div>'}function loadTransactions(uid){firebaseDb.collection('users').doc(uid).collection('transactions').onSnapshot(snapshot=>renderTransactions(snapshot.docs.map(doc=>doc.data())),error=>{console.warn('Transaction history unavailable:',error.message);document.getElementById('transaction-list').innerHTML='<div class="empty">Transaction history is temporarily unavailable</div>'})}document.getElementById('logout-button').onclick=async()=>{localStorage.removeItem('pulse-auth-label');await firebaseAuth.signOut();location.href='index.html'};firebaseAuth.onAuthStateChanged(async user=>{if(!user){await firebasePersistence.catch(()=>{});await new Promise(resolve=>setTimeout(resolve,10000));if(firebaseAuth.currentUser){return}body.classList.remove('auth-check');location.href='index.html';return}const email=user.email||'';let name=(user.displayName||'').trim();if(!name){try{const userDoc=await firebaseDb.collection('users').doc(user.uid).get();name=(userDoc.exists&&userDoc.data().displayName||'').trim()}catch{}}if(!name)name='Pulse user';document.getElementById('profile-email').textContent=email;document.getElementById('profile-name').textContent=name;document.getElementById('profile-avatar').textContent=(name[0]||'U').toUpperCase();document.getElementById('hero-name').textContent=name;try{const role=await getUserRole(user.uid);if(role!=='admin'&&!user.emailVerified){await firebaseAuth.signOut();body.classList.remove('auth-check');location.href='index.html';return}localStorage.setItem('pulse-auth-label',role==='admin'?'Admin':'Account');document.getElementById('admin-link').classList.toggle('hidden',role!=='admin')}catch{}loadTransactions(user.uid);body.classList.remove('auth-check')})
 </script>
 <script>
-const pulseLoadTransactions=loadTransactions;
 let pulseCurrentUid=null;
-loadTransactions=function(uid){
-  pulseCurrentUid=uid;
-  const key=`pulse-transactions-${uid}`,readLocal=()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}},mergeLocal=items=>{const merged=[...items];readLocal().forEach(localItem=>{if(!merged.some(item=>String(item.paymentId)===String(localItem.paymentId)))merged.push(localItem)});return merged};
-  const sub=firebaseDb.collection('users').doc(uid).collection('transactions');
-  sub.get().then(snapshot=>renderTransactions(mergeLocal(snapshot.docs.map(doc=>Object.assign({_id:doc.id},doc.data()))))).catch(async error=>{console.warn('Transaction subcollection unavailable:',error.message);try{const doc=await firebaseDb.collection('users').doc(uid).get(),items=Array.isArray(doc.data()?.transactions)?doc.data().transactions:[];renderTransactions(mergeLocal(items))}catch(fallbackError){console.warn('Transaction history unavailable:',fallbackError.message);renderTransactions(readLocal())}});
-};
 const pulseRenderTransactions=renderTransactions;
-renderTransactions=function(items){pulseRenderTransactions(items);document.querySelectorAll('#transaction-list .order').forEach((row,index)=>{const item=items.slice().sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0))[index];if(!item||['finished','failed','expired','cancelled'].includes(item.status))return;const link=`index.html?paymentId=${encodeURIComponent(item.paymentId||'')}&currency=${encodeURIComponent(item.payCurrency||'usdtbsc')}`;const price=row.querySelector('.price');if(price&&!price.querySelector('.reopen-payment'))price.insertAdjacentHTML('beforeend',`<a class="reopen-payment" href="${link}">Open payment</a>`)})};
-document.getElementById('refresh-transactions').onclick=function(){if(!pulseCurrentUid)return;const btn=this;btn.disabled=true;btn.textContent='Refreshing…';Promise.resolve(loadTransactions(pulseCurrentUid)).finally(()=>{setTimeout(()=>{btn.disabled=false;btn.textContent='Refresh'},400)})};
 document.getElementById('transaction-list').addEventListener('click',async e=>{
   const btn=e.target.closest('[data-delete-id]');
   if(!btn||!btn.dataset.deleteId)return;
@@ -96,39 +87,59 @@ document.getElementById('transaction-list').addEventListener('click',async e=>{
 <script>
 const accountPaymentApi='https://dafaf.qwweeerrbi.workers.dev';
 let accountTransactionItems=[],accountPaymentPoll=null;
-const accountRenderTransactions=renderTransactions;
-renderTransactions=function(items){
-  accountTransactionItems=items;
-  accountRenderTransactions(items);
+</script>
+<script>
+(function secureTransactionHistory(){
   clearTimeout(accountPaymentPoll);
-  if(items.some(item=>item.paymentId&&!['finished','failed','expired','cancelled'].includes(item.status)))accountPaymentPoll=setTimeout(refreshAccountPayments,5000);
-};
-async function refreshAccountPayments(){
-  const user=firebaseAuth.currentUser;
-  if(!user)return;
-  let changed=false;
-  for(const item of accountTransactionItems.filter(entry=>entry.paymentId&&!['finished','failed','expired','cancelled'].includes(entry.status))){
-    try{
-      const response=await fetch(accountPaymentApi+'/payment-status?id='+encodeURIComponent(item.paymentId));
-      const data=await response.json();
-      if(!response.ok||!data.payment_status)continue;
-      const patch={status:data.payment_status,payAmount:Number(data.pay_amount)||Number(item.payAmount)||0,actuallyPaid:Number(data.actually_paid)||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-      if(patch.status!==item.status||patch.payAmount!==Number(item.payAmount||0)){
-        Object.assign(item,{status:patch.status,payAmount:patch.payAmount,actuallyPaid:patch.actuallyPaid});
-        changed=true;
-        firebaseDb.collection('users').doc(user.uid).collection('transactions').doc(String(item.paymentId)).set(patch,{merge:true}).catch(()=>{});
-        const key='pulse-transactions-'+user.uid;
-        try{
-          const local=JSON.parse(localStorage.getItem(key)||'[]');
-          const localItem=local.find(entry=>String(entry.paymentId)===String(item.paymentId));
-          if(localItem){Object.assign(localItem,{status:patch.status,payAmount:patch.payAmount,actuallyPaid:patch.actuallyPaid});localStorage.setItem(key,JSON.stringify(local))}
-        }catch{}
+  let unsubscribeTransactions=null;
+
+  renderTransactions=function(items){
+    accountTransactionItems=items;
+    const sorted=items.slice().sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    pulseRenderTransactions(sorted);
+    document.querySelectorAll('#transaction-list .order').forEach((row,index)=>{
+      const item=sorted[index];
+      if(!item?.orderId||['finished','failed','expired','cancelled'].includes(item.status))return;
+      const link=`index.html?orderId=${encodeURIComponent(item.orderId)}&currency=${encodeURIComponent(item.payCurrency||'usdtbsc')}`;
+      const price=row.querySelector('.price');
+      if(price)price.insertAdjacentHTML('beforeend',`<a class="reopen-payment" href="${link}">Open payment</a>`);
+    });
+  };
+
+  loadTransactions=function(uid){
+    pulseCurrentUid=uid;
+    if(unsubscribeTransactions)unsubscribeTransactions();
+    unsubscribeTransactions=firebaseDb.collection('users').doc(uid).collection('transactions').orderBy('createdAt','desc').onSnapshot(
+      snapshot=>renderTransactions(snapshot.docs.map(doc=>Object.assign({_id:doc.id},doc.data()))),
+      error=>{
+        console.warn('Transaction history unavailable:',error.message);
+        document.getElementById('transaction-list').innerHTML='<div class="empty">Transaction history is temporarily unavailable</div>';
       }
-    }catch{}
+    );
+  };
+
+  async function securePaymentRequest(orderId){
+    const user=firebaseAuth.currentUser;
+    if(!user)return;
+    const token=await user.getIdToken();
+    const response=await fetch(accountPaymentApi+'/payment-status?orderId='+encodeURIComponent(orderId),{headers:{Authorization:'Bearer '+token}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||'Could not refresh payment');
   }
-  if(changed)accountRenderTransactions(accountTransactionItems);
-  if(accountTransactionItems.some(item=>item.paymentId&&!['finished','failed','expired','cancelled'].includes(item.status)))accountPaymentPoll=setTimeout(refreshAccountPayments,15000);
-}
+
+  refreshAccountPayments=async function(){
+    const active=accountTransactionItems.filter(item=>item.orderId&&!['finished','failed','expired','cancelled'].includes(item.status));
+    await Promise.allSettled(active.map(item=>securePaymentRequest(item.orderId)));
+  };
+
+  document.getElementById('refresh-transactions').onclick=async function(){
+    const btn=this;
+    btn.disabled=true;
+    btn.textContent='Refreshing…';
+    try{await refreshAccountPayments()}
+    finally{btn.disabled=false;btn.textContent='Refresh'}
+  };
+})();
 </script>
 <script>
 (function(){
