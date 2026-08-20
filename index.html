@@ -109,7 +109,28 @@ button:disabled{opacity:.6;cursor:not-allowed;transform:none!important}
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="firebase-init.js"></script>
 <script>
-const DATA={instagram:{categories:['Followers','Likes','Views'],services:{Followers:[['HQ Followers','Active-looking followers with gradual delivery',4.8],['Real Followers','Steady delivery for public profiles',7.2]],Likes:[['Post Likes','Natural-looking likes for a post',1.9]],Views:[['Video Views','Fast, stable video views',1.1]]}},tiktok:{categories:['Followers','Likes','Views'],services:{Followers:[['TikTok Followers','Gradual profile growth',5.4]],Likes:[['Video Likes','Likes for a selected video',2.2]],Views:[['Instant Views','Views with a fast start',1.3]]}},youtube:{categories:['Subscribers','Views','Likes'],services:{Subscribers:[['Channel Subscribers','Steady channel growth',8.4]],Views:[['Video Views','Realistic delivery for videos',1.6]],Likes:[['Video Likes','Likes for public videos',2.5]]}},telegram:{categories:['Members','Views','Reactions'],services:{Members:[['Channel Members','Gradual member delivery',6.9]],Views:[['Post Views','Views for public posts',1.2]],Reactions:[['Post Reactions','Reactions for public posts',2.8]]}}};
+const DATA={
+  instagram:{categories:['Followers','Likes','Views'],services:{
+    Followers:[['HQ Followers','Active-looking followers with gradual delivery',4.8,'instagram-followers-hq-followers'],['Real Followers','Steady delivery for public profiles',7.2,'instagram-followers-real-followers']],
+    Likes:[['Post Likes','Natural-looking likes for a post',1.9,'instagram-likes-post-likes']],
+    Views:[['Video Views','Fast, stable video views',1.1,'instagram-views-video-views']]
+  }},
+  tiktok:{categories:['Followers','Likes','Views'],services:{
+    Followers:[['TikTok Followers','Gradual profile growth',5.4,'tiktok-followers-tiktok-followers']],
+    Likes:[['Video Likes','Likes for a selected video',2.2,'tiktok-likes-video-likes']],
+    Views:[['Instant Views','Views with a fast start',1.3,'tiktok-views-instant-views']]
+  }},
+  youtube:{categories:['Subscribers','Views','Likes'],services:{
+    Subscribers:[['Channel Subscribers','Steady channel growth',8.4,'youtube-subscribers-channel-subscribers']],
+    Views:[['Video Views','Realistic delivery for videos',1.6,'youtube-views-video-views']],
+    Likes:[['Video Likes','Likes for public videos',2.5,'youtube-likes-video-likes']]
+  }},
+  telegram:{categories:['Members','Views','Reactions'],services:{
+    Members:[['Channel Members','Gradual member delivery',6.9,'telegram-members-channel-members']],
+    Views:[['Post Views','Views for public posts',1.2,'telegram-views-post-views']],
+    Reactions:[['Post Reactions','Reactions for public posts',2.8,'telegram-reactions-post-reactions']]
+  }}
+};
 let platform='instagram',category=DATA.instagram.categories[0],selectedService=0,view='widget',authMode='login';
 const $=id=>document.getElementById(id);
 function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
@@ -129,25 +150,23 @@ function handleAuthButton(){const user=firebaseAuth.currentUser;if(user){const c
 function applyTheme(light){document.body.classList.toggle('light',light);const toggle=$('theme-toggle');toggle.textContent=light?'☀':'☾';toggle.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');localStorage.setItem('pulse-theme',light?'light':'dark');document.getElementById('sky-day').classList.toggle('active',light);document.getElementById('sky-night').classList.toggle('active',!light)}$('theme-toggle').onclick=()=>applyTheme(!$('theme-toggle').getAttribute('aria-label')?.includes('dark'));applyTheme(localStorage.getItem('pulse-theme')==='light');document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuth();closeVerification();closePayment()}});
 const faqs=[['Do you need my password?','No We only need a public profile or post link'],['How fast does an order start?','Most orders start within a few minutes'],['Can I order for a private profile?','No The profile or post must be public']];$('faq-list').innerHTML=faqs.map((f,i)=>'<div class="faq-item '+(i===0?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="faq-q">'+f[0]+'<span>+</span></div><div class="faq-a">'+f[1]+'</div></div>').join('');
 $('order-qty').addEventListener('input',updateTotal);render();
-async function loadFirebaseContent(){try{const content=await firebaseDb.collection('siteContent').doc('main').get();if(content.exists){const d=content.data();if(d.heroEyebrow)$('hero-eyebrow').textContent=d.heroEyebrow;if(d.heroTitle1)$('hero-title-1').textContent=d.heroTitle1;if(d.heroTitle2)$('hero-title-2').textContent=d.heroTitle2;if(d.heroDescription)$('hero-description').textContent=d.heroDescription;if(Array.isArray(d.faq)&&d.faq.length)$('faq-list').innerHTML=d.faq.map((f,i)=>'<div class="faq-item '+(i===0?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="faq-q">'+escapeHtml(f.question)+'<span>+</span></div><div class="faq-a">'+escapeHtml(f.answer)+'</div></div>').join('')}const services=await firebaseDb.collection('services').get();if(!services.empty){const remote={};services.forEach(doc=>{const x=doc.data();if(!remote[x.platform])remote[x.platform]={categories:[],services:{}};if(!remote[x.platform].categories.includes(x.category))remote[x.platform].categories.push(x.category);if(!remote[x.platform].services[x.category])remote[x.platform].services[x.category]=[];remote[x.platform].services[x.category].push([x.name,x.description,Number(x.price)])});Object.entries(remote).forEach(([p,d])=>{if(!DATA[p])DATA[p]=d;else d.categories.forEach(c=>{if(!DATA[p].categories.includes(c))DATA[p].categories.push(c);const merged=[...(DATA[p].services[c]||[])];(d.services[c]||[]).forEach(item=>{const at=merged.findIndex(existing=>existing[0]===item[0]);if(at>=0)merged[at]=item;else merged.push(item)});DATA[p].services[c]=merged})});render()}}catch(error){console.warn('Firebase content unavailable',error.message)}}loadFirebaseContent();
+async function loadFirebaseContent(){try{const content=await firebaseDb.collection('siteContent').doc('main').get();if(content.exists){const d=content.data();if(d.heroEyebrow)$('hero-eyebrow').textContent=d.heroEyebrow;if(d.heroTitle1)$('hero-title-1').textContent=d.heroTitle1;if(d.heroTitle2)$('hero-title-2').textContent=d.heroTitle2;if(d.heroDescription)$('hero-description').textContent=d.heroDescription;if(Array.isArray(d.faq)&&d.faq.length)$('faq-list').innerHTML=d.faq.map((f,i)=>'<div class="faq-item '+(i===0?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="faq-q">'+escapeHtml(f.question)+'<span>+</span></div><div class="faq-a">'+escapeHtml(f.answer)+'</div></div>').join('')}const services=await firebaseDb.collection('services').get();if(!services.empty){const remote={};services.forEach(doc=>{const x=doc.data();if(!remote[x.platform])remote[x.platform]={categories:[],services:{}};if(!remote[x.platform].categories.includes(x.category))remote[x.platform].categories.push(x.category);if(!remote[x.platform].services[x.category])remote[x.platform].services[x.category]=[];remote[x.platform].services[x.category].push([x.name,x.description,Number(x.price),doc.id])});Object.entries(remote).forEach(([p,d])=>{if(!DATA[p])DATA[p]=d;else d.categories.forEach(c=>{if(!DATA[p].categories.includes(c))DATA[p].categories.push(c);const merged=[...(DATA[p].services[c]||[])];(d.services[c]||[]).forEach(item=>{const at=merged.findIndex(existing=>existing[0]===item[0]);if(at>=0)merged[at]=item;else merged.push(item)});DATA[p].services[c]=merged})});render()}}catch(error){console.warn('Firebase content unavailable',error.message)}}loadFirebaseContent();
 </script>
 <script>
-if(new URLSearchParams(location.search).get('paymentId')){
+if(new URLSearchParams(location.search).get('orderId')){
   document.getElementById('pricing').scrollIntoView({behavior:'auto',block:'start'});
 }
 const PAYMENT_API='https://dafaf.qwweeerrbi.workers.dev',PAY_CURRENCIES={usdtbsc:{label:'USDT (BSC)',network:'BSC'},usdttrc20:{label:'USDT (TRC20)',network:'TRC20'},usdtton:{label:'USDT (TON)',network:'TON'},ton:{label:'TON',network:'TON'}};
-let currentPaymentId=null,currentTransactionRef=null,currentPayCurrency='usdtbsc',orderPending=false,paymentPollTimer=null;
+let currentPaymentId=null,currentOrderId=null,currentPayCurrency='usdtbsc',orderPending=false,paymentPollTimer=null;
 const TERMINAL_STATUSES=['finished','failed','expired','cancelled'];
-const cancelledPaymentIds=new Set();
 const latestPaymentWindow=10*60*1000;
 function latestPaymentKey(user){return user?'pulse-latest-payment-'+user.uid:null}
-function transactionsKey(user){return user?'pulse-transactions-'+user.uid:null}
-function readLatestPayment(user){const key=latestPaymentKey(user);if(!key)return null;try{const payment=JSON.parse(localStorage.getItem(key)||'null');if(!payment||!payment.id||Date.now()-Number(payment.createdAt)>=latestPaymentWindow){localStorage.removeItem(key);return null}return payment}catch{localStorage.removeItem(key);return null}}
-function saveLocalTransaction(user,record){if(!user)return;const key=transactionsKey(user);let items=[];try{items=JSON.parse(localStorage.getItem(key)||'[]')}catch{}const at=items.findIndex(item=>String(item.paymentId)===String(record.paymentId));if(at>=0)items[at]={...items[at],...record};else items.push(record);localStorage.setItem(key,JSON.stringify(items))}
+function readLatestPayment(user){const key=latestPaymentKey(user);if(!key)return null;try{const payment=JSON.parse(localStorage.getItem(key)||'null');if(!payment||!payment.orderId||Date.now()-Number(payment.createdAt)>=latestPaymentWindow){localStorage.removeItem(key);return null}return payment}catch{localStorage.removeItem(key);return null}}
+async function paymentApi(path,options={}){const user=firebaseAuth.currentUser;if(!user)throw new Error('Log in to continue');const token=await user.getIdToken();const response=await fetch(PAYMENT_API+path,{...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{}),Authorization:'Bearer '+token}});let data;try{data=await response.json()}catch{throw new Error('Payment service returned an unexpected response')}if(!response.ok)throw new Error(data.error||'Payment request failed');return data}
 function setButtonLoading(el,loading,loadingText,normalText){if(!el)return;el.disabled=loading;if(loading){el.dataset.label=el.dataset.label||normalText||el.textContent;el.textContent=loadingText}else{el.textContent=el.dataset.label||normalText||el.textContent}}
 function pulseEl(el){if(!el)return;el.classList.remove('success-pulse');void el.offsetWidth;el.classList.add('success-pulse')}
 function stopPaymentPolling(){clearInterval(paymentPollTimer);paymentPollTimer=null}
-function startPaymentPolling(){stopPaymentPolling();paymentPollTimer=setInterval(()=>checkPayment(true),6000)}
+function startPaymentPolling(){stopPaymentPolling();paymentPollTimer=setInterval(()=>checkPayment(true),60000)}
 const paymentButton=document.getElementById('last-payment-toggle');
 const cleanPaymentCard=document.createElement('section');
 cleanPaymentCard.className='inline-payment';
@@ -168,17 +187,12 @@ function paintPayment(statusKind){
   paymentButton.textContent='Hide payment';
 }
 async function findLastPayment(){
-  const params=new URLSearchParams(location.search),queryId=params.get('paymentId');
-  if(queryId)return{id:String(queryId),currency:params.get('currency')||'usdtbsc'};
+  const params=new URLSearchParams(location.search),queryId=params.get('orderId');
+  if(queryId)return{orderId:String(queryId),currency:params.get('currency')||'usdtbsc'};
   const user=firebaseAuth.currentUser;
   if(!user)return null;
   const cached=readLatestPayment(user);
-  if(cached)return{id:String(cached.id),currency:cached.currency||'usdtbsc'};
-  let items=[];
-  try{items=JSON.parse(localStorage.getItem(transactionsKey(user))||'[]')}catch{}
-  if(!items.length){try{const snap=await firebaseDb.collection('users').doc(user.uid).get();items=Array.isArray(snap.data()?.transactions)?snap.data().transactions:[]}catch{}}
-  const item=items.slice().reverse().find(entry=>!TERMINAL_STATUSES.includes(entry.status));
-  return item?{id:String(item.paymentId),currency:item.payCurrency||'usdtbsc'}:null;
+  return cached?{orderId:String(cached.orderId),currency:cached.currency||'usdtbsc'}:null;
 }
 async function loadPaymentIntoCard(){
   setButtonLoading(paymentButton,true,'Loading...','Last payment');
@@ -186,17 +200,15 @@ async function loadPaymentIntoCard(){
     const saved=await findLastPayment();
     if(!saved)throw new Error('No active payments');
     const currency=PAY_CURRENCIES[saved.currency]||PAY_CURRENCIES.usdtbsc;
-    const response=await fetch(`${PAYMENT_API}/payment-status?id=${encodeURIComponent(saved.id)}`);
-    const data=await response.json();
-    if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be loaded');
-    currentPaymentId=data.payment_id;
-    currentPayCurrency=saved.currency;
-    const user=firebaseAuth.currentUser;
-    if(user)currentTransactionRef=firebaseDb.collection('users').doc(user.uid).collection('transactions').doc(String(currentPaymentId));
-    $('payment-amount').textContent=`${data.pay_amount||'—'} ${currency.label}`;
-    $('payment-address').textContent=data.pay_address||'Payment address unavailable';
-    const kind=data.payment_status==='finished'?'complete':(TERMINAL_STATUSES.includes(data.payment_status)?'failed':'pending');
-    $('payment-status').textContent=data.payment_status==='finished'?'Payment complete Your order is confirmed':TERMINAL_STATUSES.includes(data.payment_status)?'Payment '+data.payment_status+'. Create a new payment':'Waiting for payment on the '+currency.network+' network';
+    const data=await paymentApi(`/payment-status?orderId=${encodeURIComponent(saved.orderId)}`);
+    if(!data.paymentId)throw new Error('Payment could not be loaded');
+    currentOrderId=data.orderId;
+    currentPaymentId=data.paymentId;
+    currentPayCurrency=data.payCurrency||saved.currency;
+    $('payment-amount').textContent=`${data.payAmount||'—'} ${data.currencyLabel||currency.label}`;
+    $('payment-address').textContent=data.payAddress||'Payment address unavailable';
+    const kind=data.status==='finished'?'complete':(TERMINAL_STATUSES.includes(data.status)?'failed':'pending');
+    $('payment-status').textContent=data.status==='finished'?'Payment complete Your order is confirmed':TERMINAL_STATUSES.includes(data.status)?'Payment '+data.status+'. Create a new payment':'Waiting for payment on the '+currency.network+' network';
     paintPayment(kind);
     if(kind==='pending')startPaymentPolling();
   }catch(error){
@@ -220,11 +232,11 @@ function armLatestPayment(user){
 let handledQueryPayment=false;
 firebaseAuth.onAuthStateChanged(async user=>{
   armLatestPayment(user);
-  const queryId=new URLSearchParams(location.search).get('paymentId');
+  const queryId=new URLSearchParams(location.search).get('orderId');
   if(!queryId||handledQueryPayment)return;
   handledQueryPayment=true;
   await loadPaymentIntoCard();
-  if(currentPaymentId){
+  if(currentOrderId){
     $('payment-overlay').classList.add('open');
   }
 });
@@ -232,9 +244,10 @@ window.setAuthMode=function(mode){openAuth(mode)};
 
 function validateOrderInputs(){
   const link=$('order-link').value.trim(),qty=Number($('order-qty').value),s=(DATA[platform].services[category]||[])[selectedService];
-  if(!link||!/^https?:\/\//i.test(link))return{error:'Add a valid public link starting with https://'};
-  if(!qty||qty<100)return{error:'Quantity must be at least 100 units'};
+  if(!link||!/^https:\/\//i.test(link))return{error:'Add a valid public link starting with https://'};
+  if(!Number.isInteger(qty)||qty<100||qty>1000000)return{error:'Quantity must be between 100 and 1,000,000 units'};
   if(!s)return{error:'Choose a service first'};
+  if(!s[3])return{error:'This service is not available for secure checkout'};
   return{link,qty,s};
 }
 
@@ -247,26 +260,20 @@ async function placeOrder(){
   if(check.error){$('order-status').textContent=check.error;return}
   const{link,qty,s}=check;
   const payCurrency=$('pay-currency').value,currency=PAY_CURRENCIES[payCurrency];
-  const total=Number(((qty/1000)*s[2]).toFixed(2));
   orderPending=true;
   const btn=document.getElementById('place-order-btn');
   setButtonLoading(btn,true,'Creating payment…','Place order');
   $('order-status').textContent='Creating payment…';
   try{
-    const response=await fetch(PAYMENT_API+'/create-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({price_amount:total,order_id:'order-'+user.uid+'-'+Date.now(),order_description:s[0]+' · '+qty+' units',pay_currency:payCurrency,is_fixed_rate:false})});
-    let data;
-    try{data=await response.json()}catch{throw new Error('Payment service returned an unexpected response')}
-    if(!response.ok||!data.payment_id)throw new Error(data.message||data.error||'Payment could not be created');
-    currentPaymentId=data.payment_id;
-    currentPayCurrency=payCurrency;
-    currentTransactionRef=firebaseDb.collection('users').doc(user.uid).collection('transactions').doc(String(data.payment_id));
-    const record={paymentId:String(data.payment_id),service:s[0],platform,category,quantity:qty,link,priceAmount:total,payAmount:Number(data.pay_amount)||0,payCurrency,currencyLabel:currency.label,network:currency.network,status:data.payment_status||'waiting'};
-    await currentTransactionRef.set({...record,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(error=>console.warn('Transaction history could not be saved',error.message));
-    saveLocalTransaction(user,{...record,createdAt:new Date().toISOString()});
-    localStorage.setItem(latestPaymentKey(user),JSON.stringify({id:String(currentPaymentId),currency:payCurrency,createdAt:Date.now()}));
+    const data=await paymentApi('/create-payment',{method:'POST',body:JSON.stringify({serviceId:s[3],quantity:qty,link,payCurrency})});
+    if(!data.paymentId||!data.orderId)throw new Error('Payment could not be created');
+    currentPaymentId=data.paymentId;
+    currentOrderId=data.orderId;
+    currentPayCurrency=data.payCurrency||payCurrency;
+    localStorage.setItem(latestPaymentKey(user),JSON.stringify({orderId:String(currentOrderId),currency:currentPayCurrency,createdAt:Date.now()}));
     armLatestPayment(user);
-    $('payment-amount').textContent=(data.pay_amount??'—')+' '+currency.label;
-    $('payment-address').textContent=data.pay_address||'Payment address unavailable';
+    $('payment-amount').textContent=(data.payAmount??'—')+' '+(data.currencyLabel||currency.label);
+    $('payment-address').textContent=data.payAddress||'Payment address unavailable';
     $('payment-status').textContent='Waiting for payment on the '+currency.network+' network';
     $('payment-overlay').classList.remove('payment-complete','payment-failed');
     $('payment-overlay').classList.add('open');
@@ -295,26 +302,24 @@ async function copyPaymentAddress(){
 }
 
 async function cancelPayment(){
-  if(!currentPaymentId)return;
+  if(!currentOrderId)return;
   if(!confirm('Cancel this payment? You can always start a new order later.'))return;
   stopPaymentPolling();
-  cancelledPaymentIds.add(String(currentPaymentId));
-  const cancelledId=currentPaymentId,cancelledRef=currentTransactionRef;
+  const cancelledOrderId=currentOrderId;
   const btn=document.getElementById('cancel-payment-btn');
   setButtonLoading(btn,true,'Cancelling…','Cancel payment');
   try{
-    if(cancelledRef)await cancelledRef.set({status:'cancelled',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(error=>console.warn('Could not update transaction',error.message));
+    await paymentApi('/cancel-payment',{method:'POST',body:JSON.stringify({orderId:cancelledOrderId})});
     const user=firebaseAuth.currentUser;
     if(user){
-      saveLocalTransaction(user,{paymentId:String(cancelledId),status:'cancelled'});
       const key=latestPaymentKey(user);
       const cached=readLatestPayment(user);
-      if(cached&&String(cached.id)===String(cancelledId))localStorage.removeItem(key);
+      if(cached&&String(cached.orderId)===String(cancelledOrderId))localStorage.removeItem(key);
       armLatestPayment(user);
     }
     $('payment-status').textContent='Payment cancelled';
     paintPayment('failed');
-    if(String(currentPaymentId)===String(cancelledId)){currentPaymentId=null;currentTransactionRef=null}
+    if(String(currentOrderId)===String(cancelledOrderId)){currentOrderId=null;currentPaymentId=null}
     setTimeout(closePayment,600);
   }catch(error){
     $('payment-status').textContent=(error instanceof TypeError)?'Network error — could not cancel, try again':(error.message||'Could not cancel payment, try again');
@@ -325,21 +330,18 @@ async function cancelPayment(){
 }
 
 async function checkPayment(silent){
-  if(!currentPaymentId){if(!silent)$('payment-status').textContent='No active payment to check';return}
-  if(cancelledPaymentIds.has(String(currentPaymentId)))return;
-  const checkedId=currentPaymentId,checkedRef=currentTransactionRef;
+  if(!currentOrderId){if(!silent)$('payment-status').textContent='No active payment to check';return}
+  const checkedOrderId=currentOrderId;
   const btn=document.getElementById('check-payment-btn');
   if(!silent){setButtonLoading(btn,true,'Checking…','Check payment');$('payment-status').textContent='Checking payment…'}
   try{
-    const response=await fetch(PAYMENT_API+'/payment-status?id='+encodeURIComponent(checkedId));
-    let data;
-    try{data=await response.json()}catch{throw new Error('Payment service returned an unexpected response')}
-    if(!response.ok)throw new Error(data.message||data.error||'Could not check payment status');
-    if(cancelledPaymentIds.has(String(checkedId)))return;
-    const status=data.payment_status;
-    if(checkedRef)checkedRef.set({status:status||'waiting',payAmount:Number(data.pay_amount)||0,actuallyPaid:Number(data.actually_paid)||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(error=>console.warn('Transaction status could not be saved',error.message));
+    const data=await paymentApi('/payment-status?orderId='+encodeURIComponent(checkedOrderId));
+    if(String(currentOrderId)!==String(checkedOrderId))return;
+    const status=data.status;
+    currentPaymentId=data.paymentId||currentPaymentId;
+    $('payment-amount').textContent=(data.payAmount||'—')+' '+(data.currencyLabel||PAY_CURRENCIES[currentPayCurrency]?.label||'');
+    $('payment-address').textContent=data.payAddress||$('payment-address').textContent;
     const user=firebaseAuth.currentUser;
-    if(user)saveLocalTransaction(user,{paymentId:String(checkedId),status:status||'waiting',payAmount:Number(data.pay_amount)||0});
     let kind='pending';
     if(status==='finished'){$('payment-status').textContent='Payment complete Your order is confirmed';kind='complete'}
     else if(['confirmed','sending'].includes(status)){$('payment-status').textContent='Payment confirmed Finalizing'}
@@ -349,7 +351,7 @@ async function checkPayment(silent){
     paintPayment(kind);
     if(kind!=='pending'){
       stopPaymentPolling();
-      if(user){const key=latestPaymentKey(user);const cached=readLatestPayment(user);if(cached&&String(cached.id)===String(checkedId))localStorage.removeItem(key);armLatestPayment(user)}
+      if(user){const key=latestPaymentKey(user);const cached=readLatestPayment(user);if(cached&&String(cached.orderId)===String(checkedOrderId))localStorage.removeItem(key);armLatestPayment(user)}
     }
   }catch(error){
     const message=(error instanceof TypeError)?'Network error — could not reach the payment service':(error.message||'Could not check payment Try again');
