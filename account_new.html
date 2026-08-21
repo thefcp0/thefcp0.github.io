@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
+<link rel="preload" href="firebase-init.js" as="script">
+<title>OVERGENT — Account</title>
+<script>try{if(JSON.parse(localStorage.getItem('overgent-auth-ui-v1')||'null')?.initial)document.documentElement.classList.add('auth-ui-cached')}catch{}</script>
+<style>
+:root{--bg:#000;--surface:#08080a;--surface-2:#0d0d10;--line:rgba(255,255,255,.14);--text:#fff;--muted:#b8b8c2;--accent:#8b7cff;--accent-2:#8b7cff}
+body.light{--bg:#f6f7fb;--surface:#ffffff;--surface-2:#eef0f5;--line:rgba(24,26,40,.16);--text:#171821;--muted:#656977;--accent:#5b4bdb;--accent-2:#5b4bdb}
+*{box-sizing:border-box}body.auth-check{visibility:hidden}html.auth-ui-cached body.auth-check{visibility:visible}body{margin:0;background:var(--bg);color:var(--text);font:500 15px/1.5 Inter,system-ui,sans-serif;transition:.25s}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.wrap{width:min(1080px,calc(100% - 40px));margin:auto}
+nav{position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg),transparent 12%);backdrop-filter:blur(18px)}.nav{height:72px;display:flex;align-items:center;gap:10px}.brand{font-weight:800;font-size:20px;letter-spacing:-.04em;margin-right:auto}.brand i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));font-style:normal;color:#fff;margin-right:8px}.btn{border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--text);padding:10px 16px;font-weight:700}.btn:hover{border-color:var(--accent);transform:translateY(-1px)}.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.hero{padding:78px 0 42px}.eyebrow{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.13em;text-transform:uppercase}.hero h1{font-size:clamp(42px,7vw,72px);letter-spacing:-.07em;line-height:1;margin:12px 0}.hero p{color:var(--muted);max-width:550px}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;padding-bottom:80px}.panel{border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:0 18px 50px rgba(0,0,0,.12)}.panel-pad{padding:24px}.panel h2{margin:0 0 18px;font-size:22px;letter-spacing:-.04em}.profile{display:flex;align-items:center;gap:14px}.avatar{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}.profile strong{display:block;font-size:18px}.muted{color:var(--muted);font-size:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:24px;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--line)}.stat{padding:16px;background:var(--surface-2)}.stat b{display:block;font-size:24px;color:var(--accent)}.stat span{font-size:12px;color:var(--muted)}.setting{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line)}.setting:last-child{border-bottom:0}.orders{grid-column:1/-1}.order{display:grid;grid-template-columns:1.4fr .8fr .7fr .6fr auto;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}.order:last-child{border:0}.order strong{display:block}.status{display:inline-flex;padding:5px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent),transparent 86%);color:var(--accent);font-size:12px;font-weight:800}.price{text-align:right;font-weight:800}.empty{padding:25px;color:var(--muted);text-align:center}.theme{width:42px;height:42px;padding:0}.modal-note{margin-top:18px;color:var(--muted);font-size:13px}.hidden{display:none!important}
+.order-delete{border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--muted);padding:8px 10px;font-size:12px;font-weight:700;white-space:nowrap}.order-delete:hover{border-color:#ff6b7a;color:#ff6b7a}.retention-note{color:var(--muted);font-size:12px;margin:-8px 0 14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.order{grid-template-columns:1fr 1fr auto}.price{text-align:left}.orders{grid-column:auto}}@media(max-width:520px){.wrap{width:min(100% - 28px,1080px)}.stats{grid-template-columns:1fr}.nav .btn:not(.theme){padding:9px 12px;font-size:13px}}
+body{position:relative;min-height:100vh;overflow-x:hidden}body:before,body:after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(90px);pointer-events:none}body:before{width:420px;height:420px;right:-120px;top:90px;background:color-mix(in srgb,var(--accent),transparent 82%)}body:after{width:360px;height:360px;left:-130px;bottom:0;background:color-mix(in srgb,var(--accent-2),transparent 87%)}.nav{height:78px}.brand i{box-shadow:0 8px 22px color-mix(in srgb,var(--accent),transparent 70%)}.hero{padding:68px 0 34px}.hero-top{display:flex;justify-content:space-between;gap:20px;align-items:end}.hero h1{max-width:720px}.online-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:9px 12px;border-radius:999px;color:var(--muted);font-size:12px}.online-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:#4cd68a;box-shadow:0 0 0 4px rgba(76,214,138,.12)}.dashboard{display:grid;grid-template-columns:210px 1fr;gap:18px;padding-bottom:80px}.side-nav{padding:14px;height:max-content;position:sticky;top:96px}.side-link{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border:0;border-radius:12px;color:var(--muted);background:transparent;font-weight:700;text-align:left}.side-link span{width:28px;height:28px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center}.side-link.active,.side-link:hover{color:var(--text);background:var(--surface-2)}.side-link.active span{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--accent),var(--accent-2))}.content-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.content-grid .orders{grid-column:1/-1}.panel{position:relative;overflow:hidden}.panel:before{content:"";position:absolute;left:28px;right:28px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.55}.profile{padding-bottom:20px}.profile-copy{flex:1}.profile-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.meta-pill{padding:5px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:11px;font-weight:700}.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:20px}.quick-action{border:1px solid var(--line);border-radius:13px;background:var(--surface-2);color:var(--text);padding:12px;text-align:left;font-weight:700}.quick-action small{display:block;color:var(--muted);font-weight:500;margin-top:3px}.order{position:relative}.order-progress{height:4px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-top:9px}.order-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent-2))}.section-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.13em;font-weight:800;margin-bottom:8px}.activity{display:grid;gap:12px}.activity-row{display:grid;grid-template-columns:10px 1fr;gap:11px}.activity-dot{width:9px;height:9px;margin-top:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent),transparent 86%)}.activity-row p{margin:0}.activity-row time{color:var(--muted);font-size:11px}@media(max-width:900px){.dashboard{grid-template-columns:1fr}.side-nav{position:static;display:flex;overflow:auto}.side-link{min-width:max-content}.content-grid{grid-template-columns:1fr}}@media(max-width:560px){.hero-top{display:block}.online-pill{margin-top:18px}.quick-actions{grid-template-columns:1fr}.order{grid-template-columns:1fr}.dashboard{padding-bottom:50px}}
+.sky-scene{position:fixed;inset:0;z-index:-3;overflow:hidden;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.sky-scene:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,transparent 0%,transparent 35%,var(--bg) 100%),linear-gradient(180deg,color-mix(in srgb,var(--bg),transparent 15%) 0%,transparent 30%,transparent 65%,var(--bg) 100%)}
+.sky-scene.sky-day.active{opacity:.28}
+.sky-scene.sky-night.active{opacity:.5}
+.sky-track{position:absolute;top:0;left:0;height:100%;width:200%;display:flex;animation:sky-drift 140s linear infinite}
+.sky-scene.sky-night .sky-track{animation-duration:220s}
+.sky-img{width:50%;height:100%;object-fit:cover;display:block;flex-shrink:0}
+@keyframes sky-drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.sky-track{animation:none}}
+body{background:transparent}body:before{inset:0!important;width:auto!important;height:auto!important;right:0!important;top:0!important;border-radius:0!important;filter:none!important;z-index:-4!important;background:#000!important}body.light:before{background:linear-gradient(180deg,#f6f7fb,#ececf2)!important}
+/* Unified glass design */
+nav,.panel,.online-pill,.meta-pill,.quick-action,.side-link span,.btn{background:linear-gradient(145deg,rgba(18,18,22,.62),rgba(0,0,0,.42));border-color:rgba(255,255,255,.12);backdrop-filter:blur(24px) saturate(135%);-webkit-backdrop-filter:blur(24px) saturate(135%);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 45px rgba(0,0,0,.16)}body.light nav,body.light .panel,body.light .online-pill,body.light .meta-pill,body.light .quick-action,body.light .side-link span,body.light .btn{background:linear-gradient(145deg,rgba(255,255,255,.70),rgba(255,255,255,.42));border-color:rgba(255,255,255,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.92),0 18px 45px rgba(46,48,67,.10)}.panel{backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%)}.panel:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.075),transparent 27%,transparent 72%,rgba(255,255,255,.025))}.side-link{position:relative;z-index:1}.side-link.active{background:rgba(255,255,255,.07)}body.light .side-link.active{background:rgba(255,255,255,.48)}.stat,.setting,.order-progress{background:rgba(0,0,0,.42);backdrop-filter:blur(14px)}body.light .stat,body.light .setting,body.light .order-progress{background:rgba(255,255,255,.30)}.btn.primary,.side-link.active span{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
+/* Micro-animations */
+.btn,.quick-action,.side-link,.stat,.order{transition:transform .16s ease,box-shadow .18s ease,border-color .18s ease,background-color .16s ease}
+.btn:hover{transform:translateY(-1px) scale(1.02)}
+.btn:active{transform:scale(.97)}
+.quick-action:hover{transform:translateY(-2px);border-color:var(--accent)}
+.quick-action:active{transform:scale(.98)}
+.stat:hover{transform:translateY(-2px)}
+@keyframes success-bounce{0%{transform:scale(1)}45%{transform:scale(1.05)}100%{transform:scale(1)}}
+.success-overgent{animation:success-bounce .35s ease}
+/* Light theme contrast fixes */ body.light .btn.primary,body.light .btn.primary:hover{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}body.light .side-link.active{background:rgba(91,75,219,.12);color:var(--accent)}body.light .side-link.active span{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}/* Optimized cursor shader */
+.status.finished,.status.confirmed{color:#4cd68a;background:rgba(76,214,138,.12)}.status.manual_review{color:#45bce7;background:rgba(69,188,231,.12)}.status.failed,.status.expired,.status.cancelled,.status.rejected{color:#ff7188;background:rgba(255,113,136,.12)}
+</style>
+<style>.reopen-payment{display:block;margin-top:6px;color:var(--accent);font-size:11px;font-weight:800}.reopen-payment:hover{text-decoration:underline}</style>
+<style>.brand-mark{display:inline-grid!important;place-items:center;width:32px!important;height:32px!important;margin-right:9px;border-radius:10px;background:linear-gradient(145deg,var(--accent),var(--accent-2))!important;color:#fff!important;box-shadow:0 8px 24px color-mix(in srgb,var(--accent),transparent 66%);vertical-align:middle;overflow:hidden}.brand-mark svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}.brand:hover .brand-mark svg{transform:translate(1px,-1px)}@media(prefers-reduced-motion:reduce){.brand-mark svg{transition:none}.brand:hover .brand-mark svg{transform:none}}</style>
+<style>html[data-accent="green"] body{--accent:#42c98b;--accent-2:#42c98b;--accent2:#42c98b;--good:#42c98b}html[data-accent="green"] body.light{--accent:#16865a;--accent-2:#16865a;--accent2:#16865a;--good:#16865a}.accent-picker{display:inline-flex;align-items:center;gap:7px;padding:7px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(8,8,11,.38)}body.light .accent-picker{background:rgba(255,255,255,.48)}.accent-swatch{width:18px;height:18px;padding:0;border:0;border-radius:50%;transition:transform .16s ease,box-shadow .16s ease}.accent-swatch:hover{transform:scale(1.1)}.accent-swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--text)}.accent-violet{background:linear-gradient(135deg,#7465e8,#a89eff)}.accent-green{background:linear-gradient(135deg,#269d6a,#65d9a4)}@media(prefers-reduced-motion:reduce){.accent-swatch{transition:none}}</style><script>document.documentElement.dataset.accent=localStorage.getItem("overgent-accent")==="green"?"green":"violet"</script>
+<style>.stats{gap:10px!important;overflow:visible!important;border:0!important;background:transparent!important}.stat{position:relative;min-height:92px;overflow:hidden;border:1px solid color-mix(in srgb,var(--accent),transparent 68%);border-radius:16px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent),transparent 90%),rgba(0,0,0,.30))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 30px rgba(0,0,0,.16)}.stat:before{content:"";position:absolute;left:16px;right:44%;top:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}.stat b{position:relative;font-size:27px;line-height:1.15;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:transparent;background-clip:text;-webkit-background-clip:text}.stat span{position:relative;display:block;margin-top:7px;letter-spacing:.01em}body.light .stat{background:linear-gradient(145deg,color-mix(in srgb,var(--accent),transparent 91%),rgba(255,255,255,.62))!important;border-color:color-mix(in srgb,var(--accent),transparent 72%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 14px 30px rgba(44,48,70,.08)}.quick-action{position:relative;overflow:hidden}.quick-action:before{content:"";position:absolute;left:12px;right:58%;top:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent);opacity:.8}.profile-meta .meta-pill:first-child{color:var(--accent);border-color:color-mix(in srgb,var(--accent),transparent 70%)}</style>
+<style>.content-grid .account-settings{grid-column:1/-1}#overview,#profile,#settings,#transactions{scroll-margin-top:100px}.settings-grid{display:grid;grid-template-columns:minmax(0,1.25fr) 1fr 1fr;gap:10px;margin-top:16px}.settings-card{display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-height:128px;padding:15px;border:1px solid var(--line);border-radius:15px;background:color-mix(in srgb,var(--surface-2),transparent 12%)}.settings-card strong,.settings-card small{display:block}.settings-card small{margin-top:4px;color:var(--muted);font-size:11px}.settings-name-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.settings-input{min-width:0;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--surface),transparent 12%);color:var(--text);outline:0}.settings-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent),transparent 84%)}.settings-choice{display:flex;align-items:center;gap:7px}.settings-choice .accent-picker{width:max-content}.settings-status{min-height:18px;margin:10px 0 0;color:var(--accent);font-size:11px}@media(max-width:760px){.settings-grid{grid-template-columns:1fr}.settings-card{min-height:0}}</style>
+<style>.side-link span svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.account-sections>section{display:none}.account-sections[data-view="overview"]>#profile,.account-sections[data-view="overview"]>#activity,.account-sections[data-view="profile"]>#profile,.account-sections[data-view="settings"]>#settings,.account-sections[data-view="transactions"]>#transactions{display:block}.account-sections[data-view="profile"]>#profile,.account-sections[data-view="settings"]>#settings,.account-sections[data-view="transactions"]>#transactions{grid-column:1/-1}.sky-track{animation:overgent-sky-loop 120s linear infinite!important;transition:none!important;will-change:transform}@keyframes overgent-sky-loop{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}@media(prefers-reduced-motion:reduce){.sky-track{animation:none!important;transform:none;will-change:auto}}</style>
+<style>@media(max-width:620px){.nav .brand,.nav-inner .brand{font-size:0}.brand-mark{margin-right:0!important}.accent-picker{padding:4px 5px;gap:4px}.accent-swatch{width:11px;height:11px}}</style>
+<style>html,body{max-width:100%;overflow-x:hidden}*{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--accent),transparent 38%) transparent}*::-webkit-scrollbar{width:6px;height:6px}*::-webkit-scrollbar-track{background:transparent}*::-webkit-scrollbar-thumb{border-radius:999px;background:color-mix(in srgb,var(--accent),transparent 38%)}*::-webkit-scrollbar-thumb:hover{background:var(--accent)}input[type=number]{appearance:textfield;-moz-appearance:textfield}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.table-scroll,.side-nav{overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}</style>
+<style id="depth-motion-effects">
+.brand-mark{position:relative;isolation:isolate;overflow:visible!important}
+.brand-mark:before{content:"";position:absolute;inset:4px;z-index:0;border:1px solid rgba(255,255,255,.36);border-radius:7px;background:linear-gradient(145deg,rgba(255,255,255,.24),rgba(255,255,255,.04));transition:transform .26s cubic-bezier(.2,.8,.2,1),opacity .2s ease;opacity:.72}
+.brand-mark svg{position:relative;z-index:1;will-change:transform}
+.brand:hover .brand-mark:before{transform:translate(-3px,2px) rotate(-7deg);opacity:1}
+.brand:hover .brand-mark svg{transform:translate(3px,-2px) rotate(5deg)}
+@media(prefers-reduced-motion:reduce){.brand-mark:before,.brand-mark svg{transition:none!important;transform:none!important}}
+.brand-mark{width:28px!important;height:28px!important;margin-right:9px!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--accent)!important;box-shadow:none!important}.brand-mark:before{display:none!important}.brand-mark svg{width:27px;height:27px;stroke-width:2.25}body.light .brand-mark{background:transparent!important;color:var(--accent)!important;box-shadow:none!important}
+</style>
+</head>
+<body class="auth-check">
+<script>if(localStorage.getItem("overgent-theme")==="light")document.body.classList.add("light")</script>
+<div class="sky-scene sky-day" id="sky-day" aria-hidden="true"><div class="sky-track"><img class="sky-img" src="overgent-day-bg-v2.png" alt=""><img class="sky-img" src="overgent-day-bg-v2.png" alt=""></div></div>
+<div class="sky-scene sky-night" id="sky-night" aria-hidden="true"><div class="sky-track"><img class="sky-img" src="overgent-night-bg-v2.png" alt=""><img class="sky-img" src="overgent-night-bg-v2.png" alt=""></div></div>
+<nav><div class="wrap nav"><a class="brand" href="index.html"><i class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M18.6 8.6A7.4 7.4 0 1 0 19 14"/><path d="M15.2 5.2h4.2v4.2"/><circle cx="12" cy="12" r="2.15" fill="currentColor" stroke="none"/></svg></i>OVERGENT</a><a class="btn hidden" id="admin-link" href="admin.html">Admin</a><a class="btn" href="index.html">Back to services</a><button class="btn" id="logout-button">Log out</button><button class="btn theme" id="theme-toggle" aria-label="Switch theme">☾</button></div></nav>
+<script>(()=>{const key="overgent-accent",apply=value=>{const accent=value==="green"?"green":"violet";document.documentElement.dataset.accent=accent;localStorage.setItem(key,accent);document.querySelectorAll("[data-accent-choice]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.accentChoice===accent)))};document.querySelectorAll("[data-accent-choice]").forEach(button=>button.addEventListener("click",()=>apply(button.dataset.accentChoice)));apply(localStorage.getItem(key))})()</script>
+<main class="wrap"><section class="hero"><div class="hero-top"><div><div class="eyebrow">Personal dashboard</div><h1>Good evening,<br><span id="hero-name">User</span></h1><p>Everything about your profile and transactions, collected in one calm workspace</p></div><div class="online-pill">All systems operational</div></div></section><div class="dashboard">
+<aside class="panel side-nav"><a class="side-link active" href="#overview"><span><svg viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10.5V20h11v-9.5"/></svg></span>Overview</a><a class="side-link" href="#transactions"><span><svg viewBox="0 0 24 24"><path d="M7 7h12M7 12h12M7 17h12"/><circle cx="4" cy="7" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="17" r=".8" fill="currentColor" stroke="none"/></svg></span>Transactions</a><a class="side-link" href="#profile"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-4 3-6 7-6s6.3 2 7 6"/></svg></span>Profile</a><a class="side-link" href="#settings"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6l-.3-2.6h-4L10.4 6A8 8 0 0 0 9 7.1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A8 8 0 0 0 10.4 18l.3 2.6h4L15 18a8 8 0 0 0 1.5-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1Z"/></svg></span>Settings</a><a class="side-link" href="index.html#pricing"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>New order</a></aside>
+<div class="content-grid account-sections" id="overview" data-view="overview">
+<section class="panel panel-pad" id="profile"><div class="section-label">Your profile</div><div class="profile"><div class="avatar" id="profile-avatar">U</div><div class="profile-copy"><strong id="profile-name">User</strong><span class="muted" id="profile-email"></span><div class="profile-meta"><span class="meta-pill">Verified email</span><span class="meta-pill">Member since 2026</span></div></div></div><div class="stats"><div class="stat"><b id="stat-total">0</b><span>Total transactions</span></div><div class="stat"><b id="stat-active">0</b><span>Active now</span></div><div class="stat"><b id="stat-completed">0</b><span>Completed</span></div></div><div class="quick-actions"><a class="quick-action" href="index.html#pricing">New order<small>Choose a service</small></a><a class="quick-action" href="https://wa.me/79153611788" target="_blank" rel="noopener">Support<small>Open WhatsApp</small></a><a class="quick-action" href="#settings">Edit profile<small>Update your details</small></a></div></section>
+<section class="panel panel-pad" id="activity"><div class="section-label">Recent activity</div><h2>What’s happening</h2><div class="activity" id="activity-list"><div class="empty">No transaction activity yet</div></div></section>
+<section class="panel panel-pad account-settings" id="settings"><div class="section-label">Account settings</div><h2>Profile &amp; appearance</h2><div class="settings-grid"><div class="settings-card"><div><strong>Display name</strong><small>Shown in your personal dashboard.</small></div><div class="settings-name-row"><input class="settings-input" id="settings-display-name" maxlength="60" autocomplete="name" aria-label="Display name"><button class="btn primary" id="save-display-name" type="button">Save</button></div></div><div class="settings-card"><div><strong>Appearance</strong><small>Switch between dark and light mode.</small></div><button class="btn" id="settings-theme-toggle" type="button">Use light theme</button></div><div class="settings-card"><div><strong>Accent color</strong><small>Choose the color used across the site.</small></div><div class="settings-choice"><div class="accent-picker" role="group" aria-label="Account accent color"><button class="accent-swatch accent-violet" type="button" data-accent-choice="violet" aria-label="Purple accent" title="Purple"></button><button class="accent-swatch accent-green" type="button" data-accent-choice="green" aria-label="Green accent" title="Green"></button></div></div></div></div><p class="settings-status" id="settings-status" aria-live="polite"></p></section>
+<section class="panel panel-pad orders" id="transactions"><div class="section-label" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span>Payment history</span><button class="btn" id="refresh-transactions" type="button" style="padding:6px 12px;font-size:12px">Refresh</button></div><h2>Transactions</h2><p class="retention-note">Payments are kept for 7 days, then removed automatically. You can also delete any record manually.</p><div id="transaction-list"><div class="empty">Loading transactions…</div></div></section>
+</div></div></main>
+<script>(()=>{try{const ui=JSON.parse(localStorage.getItem('overgent-auth-ui-v1')||'null');if(!ui?.initial)return;document.getElementById('profile-email').textContent=ui.email||'';document.getElementById('profile-name').textContent=ui.name||'Account';document.getElementById('profile-avatar').textContent=ui.initial;document.getElementById('hero-name').textContent=ui.name||'Account';document.getElementById('admin-link').classList.toggle('hidden',ui.role!=='admin')}catch{}})()</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+const body=document.body,theme=document.getElementById('theme-toggle');function applyTheme(light){body.classList.toggle('light',light);theme.textContent=light?'\u2600':'\u263e';theme.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');localStorage.setItem('overgent-theme',light?'light':'dark');document.getElementById('sky-day').classList.toggle('active',light);document.getElementById('sky-night').classList.toggle('active',!light)}theme.onclick=()=>applyTheme(!body.classList.contains('light'));applyTheme(localStorage.getItem('overgent-theme')==='light');function toggleNotify(){const b=document.getElementById('notify-toggle');b.textContent=b.textContent==='On'?'Off':'On';b.classList.remove('success-overgent');void b.offsetWidth;b.classList.add('success-overgent')}function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]))}function transactionDate(value){if(!value)return'Just now';const date=typeof value.toDate==='function'?value.toDate():new Date(value);return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(date)}function statusLabel(status){return({waiting:'Waiting',confirming:'Confirming',confirmed:'Confirmed',sending:'Processing',finished:'Completed',partially_paid:'Partially paid',manual_review:'Under review',rejected:'Rejected',failed:'Failed',expired:'Expired',cancelled:'Cancelled'}[status]||status||'Waiting')}function renderTransactions(items){items.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));const active=items.filter(item=>!['finished','failed','expired','cancelled','rejected'].includes(item.status)).length,completed=items.filter(item=>item.status==='finished').length;document.getElementById('stat-total').textContent=items.length;document.getElementById('stat-active').textContent=active;document.getElementById('stat-completed').textContent=completed;document.getElementById('transaction-list').innerHTML=items.length?items.map(item=>`<div class="order" data-doc-id="${escapeHtml(item._id||'')}"><strong>${escapeHtml(item.platform||'Service')} · ${escapeHtml(item.serviceName||item.service||'Order')}<span class="muted">#${escapeHtml(item.paymentId)} · ${Number(item.quantity||0).toLocaleString()} units · ${escapeHtml(transactionDate(item.createdAt))}</span></strong><span><span class="status ${escapeHtml(item.status)}">${escapeHtml(statusLabel(item.status))}</span></span><span class="muted">${escapeHtml(item.payAmount||0)} ${escapeHtml(item.currencyLabel||item.payCurrency||'')}</span><span class="price">$${Number(item.priceAmount||0).toFixed(2)}</span><button class="order-delete" type="button" data-delete-id="${escapeHtml(item._id||'')}" ${item._id?'':'disabled'}>Delete</button></div>`).join(''):'<div class="empty">No transactions yet Your new payments will appear here</div>';document.getElementById('activity-list').innerHTML=items.length?items.slice(0,3).map(item=>`<div class="activity-row"><i class="activity-dot"></i><div><p>${escapeHtml(item.serviceName||item.service||'Payment')} — ${escapeHtml(statusLabel(item.status))}</p><time>${escapeHtml(transactionDate(item.createdAt))}</time></div></div>`).join(''):'<div class="empty">No transaction activity yet</div>'}function loadTransactions(uid){firebaseDb.collection('users').doc(uid).collection('transactions').onSnapshot(snapshot=>renderTransactions(snapshot.docs.map(doc=>doc.data())),error=>{console.warn('Transaction history unavailable:',error.message);document.getElementById('transaction-list').innerHTML='<div class="empty">Transaction history is temporarily unavailable</div>'})}document.getElementById('logout-button').onclick=async()=>{localStorage.removeItem('overgent-auth-label');await firebaseAuth.signOut();location.href='index.html'};firebaseAuth.onAuthStateChanged(async user=>{if(!user){await firebasePersistence.catch(()=>{});await new Promise(resolve=>setTimeout(resolve,10000));if(firebaseAuth.currentUser){return}body.classList.remove('auth-check');location.href='index.html';return}const email=user.email||'';let name=(user.displayName||'').trim();if(!name){try{const userDoc=await firebaseDb.collection('users').doc(user.uid).get();name=(userDoc.exists&&userDoc.data().displayName||'').trim()}catch{}}if(!name)name='Overgent user';document.getElementById('profile-email').textContent=email;document.getElementById('profile-name').textContent=name;document.getElementById('profile-avatar').textContent=(name[0]||'U').toUpperCase();document.getElementById('hero-name').textContent=name;try{const role=await getUserRole(user.uid);if(role!=='admin'&&!user.emailVerified){await firebaseAuth.signOut();body.classList.remove('auth-check');location.href='index.html';return}localStorage.setItem('overgent-auth-label',role==='admin'?'Admin':'Account');document.getElementById('admin-link').classList.toggle('hidden',role!=='admin')}catch{}loadTransactions(user.uid);body.classList.remove('auth-check')})
+</script>
+<script>
+const settingsNameInput=document.getElementById('settings-display-name'),settingsStatus=document.getElementById('settings-status'),settingsThemeButton=document.getElementById('settings-theme-toggle');
+const AUTH_UI_CACHE='overgent-auth-ui-v1';
+function cacheAccountAuthUi(user,nameOverride){if(!user)return;const name=(nameOverride||user.displayName||(user.email||'Account').split('@')[0]||'Account').trim(),role=localStorage.getItem('overgent-auth-label')==='Admin'?'admin':'user';localStorage.setItem(AUTH_UI_CACHE,JSON.stringify({initial:(name[0]||'U').toUpperCase(),name,email:user.email||'',role}))}
+function syncSettingsTheme(){settingsThemeButton.textContent=body.classList.contains('light')?'Use dark theme':'Use light theme'}
+syncSettingsTheme();
+settingsThemeButton.onclick=()=>{applyTheme(!body.classList.contains('light'));syncSettingsTheme()};
+theme.addEventListener('click',()=>setTimeout(syncSettingsTheme,0));
+document.querySelectorAll('#settings [data-accent-choice]').forEach(button=>button.addEventListener('click',()=>{const accent=button.dataset.accentChoice==='green'?'green':'violet';document.documentElement.dataset.accent=accent;localStorage.setItem('overgent-accent',accent);document.querySelectorAll('[data-accent-choice]').forEach(choice=>choice.setAttribute('aria-pressed',String(choice.dataset.accentChoice===accent)))}));
+document.getElementById('save-display-name').onclick=async function(){
+  const user=firebaseAuth.currentUser,name=settingsNameInput.value.trim();
+  if(!user){settingsStatus.textContent='Log in again to update your profile.';return}
+  if(name.length<2){settingsStatus.textContent='Enter at least 2 characters.';settingsNameInput.focus();return}
+  this.disabled=true;settingsStatus.textContent='Saving…';
+  try{
+    await user.updateProfile({displayName:name});
+    await firebaseDb.collection('users').doc(user.uid).set({displayName:name},{merge:true});
+    document.getElementById('profile-name').textContent=name;
+    document.getElementById('profile-avatar').textContent=name[0].toUpperCase();
+    document.getElementById('hero-name').textContent=name;
+    cacheAccountAuthUi(user,name);
+    settingsStatus.textContent='Profile saved.';
+  }catch(error){settingsStatus.textContent=error.message||'Could not save your profile.'}
+  finally{this.disabled=false}
+};
+firebaseAuth.onAuthStateChanged(user=>{if(user)settingsNameInput.value=(user.displayName||'').trim()});
+firebaseAuth.onAuthStateChanged(user=>{if(user)cacheAccountAuthUi(user)});
+document.getElementById('logout-button').addEventListener('click',()=>localStorage.removeItem(AUTH_UI_CACHE),true);
+const accountSectionLinks=[...document.querySelectorAll('.side-link[href^="#"]')];
+function syncAccountSection(){const requested=(location.hash||'#overview').slice(1),target=['overview','transactions','profile','settings'].includes(requested)?requested:'overview';document.getElementById('overview').dataset.view=target;accountSectionLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')==='#'+target))}
+accountSectionLinks.forEach(link=>link.addEventListener('click',event=>{event.preventDefault();history.replaceState(null,'',link.getAttribute('href'));syncAccountSection()}));
+window.addEventListener('hashchange',syncAccountSection);syncAccountSection();
+</script>
+<script>
+let overgentCurrentUid=null;
+const overgentRenderTransactions=renderTransactions;
+document.getElementById('transaction-list').addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-delete-id]');
+  if(!btn||!btn.dataset.deleteId)return;
+  if(!confirm('Delete this payment record? This cannot be undone.'))return;
+  if(!overgentCurrentUid)return;
+  btn.disabled=true;btn.textContent='Deleting…';
+  try{
+    await firebaseDb.collection('users').doc(overgentCurrentUid).collection('transactions').doc(btn.dataset.deleteId).delete();
+    const row=btn.closest('.order');
+    if(row)row.remove();
+    if(!document.getElementById('transaction-list').children.length)document.getElementById('transaction-list').innerHTML='<div class="empty">No transactions yet Your new payments will appear here</div>';
+  }catch(error){
+    console.warn('Could not delete transaction:',error.message);
+    btn.disabled=false;btn.textContent='Delete';
+    alert('Could not delete this record: '+error.message);
+  }
+});
+</script>
+<script>
+const accountPaymentApi='https://dafaf.qwweeerrbi.workers.dev';
+let accountTransactionItems=[],accountPaymentPoll=null;
+</script>
+<script>
+(function secureTransactionHistory(){
+  clearTimeout(accountPaymentPoll);
+  let unsubscribeTransactions=null;
+
+  renderTransactions=function(items){
+    accountTransactionItems=items;
+    const sorted=items.slice().sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    overgentRenderTransactions(sorted);
+    document.querySelectorAll('#transaction-list .order').forEach((row,index)=>{
+      const item=sorted[index];
+      if(!item?.orderId||item.paymentMethod==='paytm'||['finished','failed','expired','cancelled','rejected'].includes(item.status))return;
+      const link=`index.html?orderId=${encodeURIComponent(item.orderId)}&currency=${encodeURIComponent(item.payCurrency||'usdtbsc')}`;
+      const price=row.querySelector('.price');
+      if(price)price.insertAdjacentHTML('beforeend',`<a class="reopen-payment" href="${link}">Open payment</a>`);
+    });
+  };
+
+  loadTransactions=function(uid){
+    overgentCurrentUid=uid;
+    if(unsubscribeTransactions)unsubscribeTransactions();
+    unsubscribeTransactions=firebaseDb.collection('users').doc(uid).collection('transactions').orderBy('createdAt','desc').limit(100).onSnapshot(
+      snapshot=>renderTransactions(snapshot.docs.map(doc=>Object.assign({_id:doc.id},doc.data()))),
+      error=>{
+        console.warn('Transaction history unavailable:',error.message);
+        document.getElementById('transaction-list').innerHTML='<div class="empty">Transaction history is temporarily unavailable</div>';
+      }
+    );
+  };
+
+  async function securePaymentRequest(orderId){
+    const user=firebaseAuth.currentUser;
+    if(!user)return;
+    const token=await user.getIdToken();
+    const response=await fetch(accountPaymentApi+'/payment-status?orderId='+encodeURIComponent(orderId),{headers:{Authorization:'Bearer '+token}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||'Could not refresh payment');
+  }
+
+  refreshAccountPayments=async function(){
+    const active=accountTransactionItems.filter(item=>item.orderId&&item.paymentMethod!=='paytm'&&!['finished','failed','expired','cancelled','rejected'].includes(item.status));
+    await Promise.allSettled(active.map(item=>securePaymentRequest(item.orderId)));
+  };
+
+  document.getElementById('refresh-transactions').onclick=async function(){
+    const btn=this;
+    btn.disabled=true;
+    btn.textContent='Refreshing…';
+    try{await refreshAccountPayments()}
+    finally{btn.disabled=false;btn.textContent='Refresh'}
+  };
+})();
+</script>
+<script>
+(function(){
+var done=new Set();
+function pageUrl(raw){
+  try{
+    var url=new URL(raw,location.href),file=url.pathname.split('/').pop();
+    if(url.origin!==location.origin||!/^(index|admin|account_new)\.html$/.test(file))return '';
+    url.hash='';
+    return url.href;
+  }catch{return ''}
+}
+function warm(raw){
+  var url=pageUrl(raw);
+  if(!url||done.has(url)||url===location.href.split('#')[0])return;
+  done.add(url);
+  var link=document.createElement('link');
+  link.rel='prefetch';
+  link.as='document';
+  link.href=url;
+  document.head.appendChild(link);
+}
+function warmLink(target){
+  var anchor=target.closest&&target.closest('a[href]');
+  if(anchor)warm(anchor.getAttribute('href'));
+}
+document.addEventListener('pointerover',function(event){warmLink(event.target)},true);
+document.addEventListener('touchstart',function(event){warmLink(event.target)},{passive:true,capture:true});
+document.addEventListener('focusin',function(event){warmLink(event.target)});
+var idle=window.requestIdleCallback||function(callback){return setTimeout(callback,900)};
+idle(function(){
+  var file=location.pathname.split('/').pop()||'index.html';
+  if(file==='index.html')warm('account_new.html');
+  if(file==='account_new.html'){warm('index.html');if(localStorage.getItem('overgent-auth-label')==='Admin')warm('admin.html')}
+  if(file==='admin.html'){warm('index.html');warm('account_new.html')}
+},{timeout:1800});
+})();
+</script>
+</body>
+</html>
