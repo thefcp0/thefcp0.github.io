@@ -47,6 +47,9 @@
 .brand:hover .brand-mark svg{transform:translate(3px,-2px) rotate(5deg)}
 @media(prefers-reduced-motion:reduce){.brand-mark:before,.brand-mark svg{transition:none!important;transform:none!important}}
 </style>
+<style id="manual-payment-admin">
+.manual-payment-list{display:grid;gap:10px}.manual-payment-row{display:grid;grid-template-columns:minmax(0,1.35fr) .8fr .7fr auto;gap:14px;align-items:center;padding:15px;border:1px solid var(--line);border-radius:15px;background:color-mix(in srgb,var(--panel),transparent 5%)}.manual-payment-row h3{margin:0;font-size:15px}.manual-payment-row p{margin:3px 0 0;color:var(--muted);font-size:11px}.manual-payment-row .manual-amount strong{display:block;font-size:20px;color:#2bb4e7;font-variant-numeric:tabular-nums}.manual-payment-row .manual-amount small,.manual-payment-row .manual-time{color:var(--muted);font-size:10px}.manual-payment-link{color:var(--accent);font-size:11px;font-weight:800;word-break:break-all}.manual-payment-actions{display:flex;gap:7px}.manual-payment-actions .btn{padding:8px 11px;font-size:11px}.btn.confirm-paytm{border-color:rgba(76,214,138,.4);background:rgba(76,214,138,.12);color:#4cd68a}.manual-empty{padding:24px;border:1px dashed var(--line);border-radius:15px;color:var(--muted);text-align:center}.manual-badge{display:inline-flex;align-items:center;gap:7px;color:#2bb4e7;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}.manual-badge:before{content:"";width:7px;height:7px;border-radius:50%;background:#2bb4e7;box-shadow:0 0 12px #2bb4e7}@media(max-width:760px){.manual-payment-row{grid-template-columns:1fr 1fr}.manual-payment-actions{grid-column:1/-1}.manual-payment-actions .btn{flex:1}}@media(max-width:460px){.manual-payment-row{grid-template-columns:1fr}.manual-payment-actions{grid-column:auto}}
+</style>
 </head>
 <body class="auth-check">
 <script>if(localStorage.getItem("overgent-theme")==="light")document.body.classList.add("light")</script>
@@ -102,6 +105,12 @@
       <div class="status" id="service-status"></div>
       <div class="services" id="service-list"></div>
     </section>
+    <section class="panel wide">
+      <div class="service-head"><div><div class="manual-badge">Paytm review queue</div><h2 style="margin:5px 0 0">Manual payments</h2></div><button class="btn" id="refresh-manual-payments" type="button">Refresh</button></div>
+      <p class="muted">Check the received amount in Paytm before confirming an order.</p>
+      <div class="status" id="manual-payment-status"></div>
+      <div class="manual-payment-list" id="manual-payment-list"><div class="manual-empty">Loading Paytm payments…</div></div>
+    </section>
   </div>
 </main>
 </div>
@@ -137,7 +146,7 @@ async function verifyAdmin(user){
   $("admin-email").textContent=user.email;
   localStorage.setItem("overgent-auth-label","Admin");
   document.body.classList.remove("auth-check");
-  await Promise.all([loadContent(),loadServices()]);
+  await Promise.all([loadContent(),loadServices(),loadManualPayments()]);
   return true;
 }
 
@@ -187,6 +196,25 @@ function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"
 async function saveService(id){const row=document.querySelector(`[data-id="${id}"]`),data={};row.querySelectorAll("[data-key]").forEach(input=>data[input.dataset.key]=input.dataset.key==="price"?Number(input.value):input.value.trim());await firebaseDb.collection("services").doc(id).update(data);$("service-status").textContent="Service updated";overgentEl($("service-status"))}
 $("seed-services").onclick=async()=>{for(const [platform,category,name,description,price] of defaultServices){const id=`${platform}-${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g,"-");await firebaseDb.collection("services").doc(id).set({platform,category,name,description,price},{merge:true})}$("service-status").textContent="Defaults imported";overgentEl($("service-status"));await loadServices()};
 async function deleteService(id){if(!confirm("Delete this service?"))return;await firebaseDb.collection("services").doc(id).delete();const row=document.querySelector(`[data-id="${id}"]`);if(row)row.remove();if(!$("service-list").children.length)$("service-list").innerHTML='<div class="muted">No Firestore services yet Import the built-in defaults</div>'}
+
+function manualPaymentDate(value){if(!value)return'Just now';const date=typeof value.toDate==='function'?value.toDate():new Date(value);return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(date)}
+async function loadManualPayments(){
+  const list=$("manual-payment-list"),status=$("manual-payment-status");
+  status.textContent='Loading…';
+  try{
+    const users=await firebaseDb.collection('users').get(),groups=await Promise.all(users.docs.map(async userDoc=>{const payments=await userDoc.ref.collection('transactions').where('status','==','manual_review').get();return payments.docs.filter(doc=>doc.data().paymentMethod==='paytm').map(doc=>({uid:userDoc.id,user:userDoc.data(),id:doc.id,data:doc.data()}))})),items=groups.flat().sort((a,b)=>(b.data.createdAt?.seconds||0)-(a.data.createdAt?.seconds||0));
+    list.innerHTML=items.length?items.map(item=>{const d=item.data,u=item.user||{};return `<article class="manual-payment-row"><div><h3>${escapeHtml(d.platform||'Service')} · ${escapeHtml(d.service||'Order')}</h3><p>${escapeHtml(u.displayName||u.email||item.uid)} · ${Number(d.quantity||0).toLocaleString()} units</p><a class="manual-payment-link" href="${escapeHtml(d.link||'#')}" target="_blank" rel="noopener">${escapeHtml(d.link||'No link')}</a></div><div class="manual-amount"><strong>₹${Number(d.payAmount||0).toFixed(2)}</strong><small>$${Number(d.priceAmount||0).toFixed(2)} · rate ₹${Number(d.fxRate||0).toFixed(4)}</small></div><time class="manual-time">${escapeHtml(manualPaymentDate(d.createdAt))}</time><div class="manual-payment-actions"><button class="btn confirm-paytm" type="button" data-manual-action="confirmed" data-manual-uid="${escapeHtml(item.uid)}" data-manual-id="${escapeHtml(item.id)}">Confirm payment</button><button class="btn danger" type="button" data-manual-action="rejected" data-manual-uid="${escapeHtml(item.uid)}" data-manual-id="${escapeHtml(item.id)}">Reject</button></div></article>`}).join(''):'<div class="manual-empty">No Paytm payments are waiting for review.</div>';
+    status.textContent=items.length?items.length+' payment'+(items.length===1?'':'s')+' waiting':'';
+  }catch(error){status.textContent=error.message;list.innerHTML='<div class="manual-empty">Could not load the Paytm review queue.</div>'}
+}
+$("refresh-manual-payments").onclick=loadManualPayments;
+$("manual-payment-list").onclick=async event=>{
+  const button=event.target.closest('[data-manual-action]');if(!button||!verifiedAdmin)return;
+  const action=button.dataset.manualAction,uid=button.dataset.manualUid,id=button.dataset.manualId,label=button.textContent;
+  button.disabled=true;button.textContent=action==='confirmed'?'Confirming…':'Rejecting…';
+  try{await firebaseDb.collection('users').doc(uid).collection('transactions').doc(id).update({status:action,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});$("manual-payment-status").textContent=action==='confirmed'?'Payment confirmed':'Payment rejected';await loadManualPayments()}
+  catch(error){$("manual-payment-status").textContent=error.message;button.disabled=false;button.textContent=label}
+};
 </script>
 <script>
 (function(){
